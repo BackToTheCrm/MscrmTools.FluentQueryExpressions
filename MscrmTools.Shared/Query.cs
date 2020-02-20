@@ -16,16 +16,20 @@ namespace MscrmTools.FluentQueryExpressions
         }
     }
 
-    public class Query<T> where T : Entity
+    public class Query<TEntity> where TEntity : Entity
     {
-        public Query()
+        public IOrganizationService OrganizationService { get; }
+
+        public Query(IOrganizationService organizationService = null)
         {
-            string entityLogicalName = typeof(T).GetField("EntityLogicalName").GetRawConstantValue().ToString();
+            OrganizationService = organizationService;
+            var entityLogicalName = typeof(TEntity).GetField("EntityLogicalName").GetRawConstantValue().ToString();
             QueryExpression = new QueryExpression(entityLogicalName);
         }
 
-        protected Query(string entityLogicalName)
+        protected Query(string entityLogicalName, IOrganizationService organizationService = null)
         {
+            OrganizationService = organizationService;
             QueryExpression = new QueryExpression(entityLogicalName);
         }
 
@@ -33,21 +37,21 @@ namespace MscrmTools.FluentQueryExpressions
 
         #region QueryExpression
 
-        public Query<T> Distinct()
+        public Query<TEntity> Distinct()
         {
             QueryExpression.Distinct = true;
 
             return this;
         }
 
-        public Query<T> NoLock()
+        public Query<TEntity> NoLock()
         {
             QueryExpression.NoLock = true;
 
             return this;
         }
 
-        public Query<T> Top(int top)
+        public Query<TEntity> Top(int top)
         {
             QueryExpression.TopCount = top;
 
@@ -58,14 +62,14 @@ namespace MscrmTools.FluentQueryExpressions
 
         #region Attributes
 
-        public Query<T> Select(bool allColumns)
+        public Query<TEntity> Select(bool allColumns)
         {
             QueryExpression.ColumnSet = new ColumnSet(allColumns);
 
             return this;
         }
 
-        public Query<T> Select(params string[] attributes)
+        public Query<TEntity> Select(params string[] attributes)
         {
             if (attributes.Length == 0)
             {
@@ -77,7 +81,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> Select(Expression<Func<T, object>> anonymousTypeInitializer)
+        public Query<TEntity> Select(Expression<Func<TEntity, object>> anonymousTypeInitializer)
         {
             QueryExpression.ColumnSet.AddColumns(AnonymousTypeHelper.GetAttributeNamesArray(anonymousTypeInitializer));
 
@@ -88,14 +92,14 @@ namespace MscrmTools.FluentQueryExpressions
 
         #region Filters
 
-        public Query<T> AddFilters(params Filter[] filters)
+        public Query<TEntity> AddFilters(params Filter[] filters)
         {
             QueryExpression.Criteria.Filters.AddRange(filters.Select(f => f.InnerFilter));
 
             return this;
         }
 
-        public Query<T> AddFilters(LogicalOperator logicalOperator, params Filter[] filters)
+        public Query<TEntity> AddFilters(LogicalOperator logicalOperator, params Filter[] filters)
         {
             QueryExpression.Criteria.FilterOperator = logicalOperator;
             QueryExpression.Criteria.Filters.AddRange(filters.Select(f => f.InnerFilter));
@@ -103,7 +107,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> SetDefaultFilterOperator(LogicalOperator logicalOperator)
+        public Query<TEntity> SetDefaultFilterOperator(LogicalOperator logicalOperator)
         {
             QueryExpression.Criteria.FilterOperator = logicalOperator;
 
@@ -114,7 +118,7 @@ namespace MscrmTools.FluentQueryExpressions
 
         #region Link Entities
 
-        public Query<T> AddLink<TU>(Link<TU> link) where TU : Entity
+        public Query<TEntity> AddLink<TU>(Link<TU> link) where TU : Entity
         {
             QueryExpression.LinkEntities.Add(link.InnerLinkEntity);
             link.InnerLinkEntity.LinkFromEntityName = QueryExpression.EntityName;
@@ -125,7 +129,7 @@ namespace MscrmTools.FluentQueryExpressions
 
         #region Order
 
-        public Query<T> Order(string attribute, OrderType order)
+        public Query<TEntity> Order(string attribute, OrderType order)
         {
             QueryExpression.AddOrder(attribute, order);
             return this;
@@ -135,7 +139,7 @@ namespace MscrmTools.FluentQueryExpressions
 
         #region PagingInfo
 
-        public Query<T> NextPage(string pagingCookie)
+        public Query<TEntity> NextPage(string pagingCookie)
         {
             QueryExpression.PageInfo.PageNumber++;
             QueryExpression.PageInfo.PagingCookie = pagingCookie;
@@ -143,7 +147,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> SetPagingInfo(int pageNumber, int count, bool returnTotalCount = false)
+        public Query<TEntity> SetPagingInfo(int pageNumber, int count, bool returnTotalCount = false)
         {
             QueryExpression.PageInfo = new PagingInfo
             {
@@ -159,21 +163,21 @@ namespace MscrmTools.FluentQueryExpressions
 
         #region Conditions
 
-        public Query<T> Where(string attributeName, ConditionOperator conditionOperator, params object[] values)
+        public Query<TEntity> Where(string attributeName, ConditionOperator conditionOperator, params object[] values)
         {
             QueryExpression.Criteria.AddCondition(attributeName, conditionOperator, values);
 
             return this;
         }
 
-        public Query<T> Where(string entityName, string attributeName, ConditionOperator conditionOperator, params object[] values)
+        public Query<TEntity> Where(string entityName, string attributeName, ConditionOperator conditionOperator, params object[] values)
         {
             QueryExpression.Criteria.AddCondition(entityName, attributeName, conditionOperator, values);
 
             return this;
         }
 
-        public Query<T> WhereAbove(string attributeName, object value, string entityname = null)
+        public Query<TEntity> WhereAbove(string attributeName, object value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -187,7 +191,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereAboveOrEqual(string attributeName, object value, string entityname = null)
+        public Query<TEntity> WhereAboveOrEqual(string attributeName, object value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -201,7 +205,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereBeginsWith(string attributeName, object value, string entityname = null)
+        public Query<TEntity> WhereBeginsWith(string attributeName, object value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -215,7 +219,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereBetween(string attributeName, object value1, object value2, string entityname = null)
+        public Query<TEntity> WhereBetween(string attributeName, object value1, object value2, string entityname = null)
         {
             if (entityname != null)
             {
@@ -229,7 +233,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereChildOf(string attributeName, object value, string entityname = null)
+        public Query<TEntity> WhereChildOf(string attributeName, object value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -243,7 +247,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereContains(string attributeName, object value, string entityname = null)
+        public Query<TEntity> WhereContains(string attributeName, object value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -259,14 +263,14 @@ namespace MscrmTools.FluentQueryExpressions
 
 #if CRMV9
 
-        public Query<T> WhereContainValues(string attributeName, params object[] values)
+        public Query<TEntity> WhereContainValues(string attributeName, params object[] values)
         {
             QueryExpression.Criteria.AddCondition(attributeName, ConditionOperator.ContainValues, values);
 
             return this;
         }
 
-        public Query<T> WhereContainValues(string entityname, string attributeName, params object[] values)
+        public Query<TEntity> WhereContainValues(string entityname, string attributeName, params object[] values)
         {
             QueryExpression.Criteria.AddCondition(entityname, attributeName, ConditionOperator.ContainValues, values);
 
@@ -275,7 +279,7 @@ namespace MscrmTools.FluentQueryExpressions
 
 #endif
 
-        public Query<T> WhereDoesNotBeginWith(string attributeName, object value, string entityname = null)
+        public Query<TEntity> WhereDoesNotBeginWith(string attributeName, object value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -289,7 +293,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereDoesNotContain(string attributeName, object value, string entityname = null)
+        public Query<TEntity> WhereDoesNotContain(string attributeName, object value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -303,21 +307,21 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 #if CRMV9
-        public Query<T> WhereDoesNotContainValues(string attributeName, params object[] values)
+        public Query<TEntity> WhereDoesNotContainValues(string attributeName, params object[] values)
         {
             QueryExpression.Criteria.AddCondition(attributeName, ConditionOperator.DoesNotContainValues, values);
 
             return this;
         }
 
-        public Query<T> WhereDoesNotContainValues(string entityname, string attributeName, params object[] values)
+        public Query<TEntity> WhereDoesNotContainValues(string entityname, string attributeName, params object[] values)
         {
             QueryExpression.Criteria.AddCondition(entityname, attributeName, ConditionOperator.DoesNotContainValues, values);
 
             return this;
         }
 #endif
-        public Query<T> WhereDoesNotEndWith(string attributeName, object value, string entityname = null)
+        public Query<TEntity> WhereDoesNotEndWith(string attributeName, object value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -331,7 +335,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereEndsWith(string attributeName, object value, string entityname = null)
+        public Query<TEntity> WhereEndsWith(string attributeName, object value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -345,7 +349,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereEqual(string attributeName, object value, string entityname = null)
+        public Query<TEntity> WhereEqual(string attributeName, object value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -359,7 +363,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereEqualBusinessId(string attributeName, string entityname = null)
+        public Query<TEntity> WhereEqualBusinessId(string attributeName, string entityname = null)
         {
             if (entityname != null)
             {
@@ -373,7 +377,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereEqualUserId(string attributeName, string entityname = null)
+        public Query<TEntity> WhereEqualUserId(string attributeName, string entityname = null)
         {
             if (entityname != null)
             {
@@ -387,7 +391,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereEqualUserLanguage(string attributeName, string entityname = null)
+        public Query<TEntity> WhereEqualUserLanguage(string attributeName, string entityname = null)
         {
             if (entityname != null)
             {
@@ -401,7 +405,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereEqualUserOrUserHierarchy(string attributeName, string entityname = null)
+        public Query<TEntity> WhereEqualUserOrUserHierarchy(string attributeName, string entityname = null)
         {
             if (entityname != null)
             {
@@ -415,7 +419,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereEqualUserOrUserHierarchyAndTeams(string attributeName, string entityname = null)
+        public Query<TEntity> WhereEqualUserOrUserHierarchyAndTeams(string attributeName, string entityname = null)
         {
             if (entityname != null)
             {
@@ -430,7 +434,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereEqualUserOrUserTeams(string attributeName, string entityname = null)
+        public Query<TEntity> WhereEqualUserOrUserTeams(string attributeName, string entityname = null)
         {
             if (entityname != null)
             {
@@ -444,7 +448,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereEqualUserTeams(string attributeName, string entityname = null)
+        public Query<TEntity> WhereEqualUserTeams(string attributeName, string entityname = null)
         {
             if (entityname != null)
             {
@@ -458,7 +462,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereGreaterEqual(string attributeName, object value, string entityname = null)
+        public Query<TEntity> WhereGreaterEqual(string attributeName, object value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -472,7 +476,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereGreaterThan(string attributeName, object value, string entityname = null)
+        public Query<TEntity> WhereGreaterThan(string attributeName, object value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -486,35 +490,35 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereIn(string attributeName, IList value)
+        public Query<TEntity> WhereIn(string attributeName, IList value)
         {
             QueryExpression.Criteria.Conditions.Add(new ConditionExpression(attributeName, ConditionOperator.In, value));
 
             return this;
         }
 
-        public Query<T> WhereIn(string attributeName, params object[] values)
+        public Query<TEntity> WhereIn(string attributeName, params object[] values)
         {
             QueryExpression.Criteria.Conditions.Add(new ConditionExpression(attributeName, ConditionOperator.In, values));
 
             return this;
         }
 
-        public Query<T> WhereIn(string entityname, string attributeName, IList value)
+        public Query<TEntity> WhereIn(string entityname, string attributeName, IList value)
         {
             QueryExpression.Criteria.Conditions.Add(new ConditionExpression(entityname, attributeName, ConditionOperator.In, value));
 
             return this;
         }
 
-        public Query<T> WhereIn(string entityname, string attributeName, params object[] values)
+        public Query<TEntity> WhereIn(string entityname, string attributeName, params object[] values)
         {
             QueryExpression.Criteria.Conditions.Add(new ConditionExpression(entityname, attributeName, ConditionOperator.In, values));
 
             return this;
         }
 
-        public Query<T> WhereInFiscalPeriod(string attributeName, object value, string entityname = null)
+        public Query<TEntity> WhereInFiscalPeriod(string attributeName, object value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -528,7 +532,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereInFiscalPeriodAndYear(string attributeName, int period, int year, string entityname = null)
+        public Query<TEntity> WhereInFiscalPeriodAndYear(string attributeName, int period, int year, string entityname = null)
         {
             if (entityname != null)
             {
@@ -542,7 +546,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereInFiscalYear(string attributeName, int year, string entityname = null)
+        public Query<TEntity> WhereInFiscalYear(string attributeName, int year, string entityname = null)
         {
             if (entityname != null)
             {
@@ -556,7 +560,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereInOrAfterFiscalPeriodAndYear(string attributeName, int period, int year, string entityname = null)
+        public Query<TEntity> WhereInOrAfterFiscalPeriodAndYear(string attributeName, int period, int year, string entityname = null)
         {
             if (entityname != null)
             {
@@ -571,7 +575,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereInOrBeforeFiscalPeriodAndYear(string attributeName, int period, int year, string entityname = null)
+        public Query<TEntity> WhereInOrBeforeFiscalPeriodAndYear(string attributeName, int period, int year, string entityname = null)
         {
             if (entityname != null)
             {
@@ -586,7 +590,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereLast7Days(string attributeName, string entityname = null)
+        public Query<TEntity> WhereLast7Days(string attributeName, string entityname = null)
         {
             if (entityname != null)
             {
@@ -600,7 +604,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereLastFiscalPeriod(string attributeName, string entityname = null)
+        public Query<TEntity> WhereLastFiscalPeriod(string attributeName, string entityname = null)
         {
             if (entityname != null)
             {
@@ -614,7 +618,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereLastFiscalYear(string attributeName, string entityname = null)
+        public Query<TEntity> WhereLastFiscalYear(string attributeName, string entityname = null)
         {
             if (entityname != null)
             {
@@ -628,7 +632,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereLastMonth(string attributeName, string entityname = null)
+        public Query<TEntity> WhereLastMonth(string attributeName, string entityname = null)
         {
             if (entityname != null)
             {
@@ -642,7 +646,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereLastWeek(string attributeName, string entityname = null)
+        public Query<TEntity> WhereLastWeek(string attributeName, string entityname = null)
         {
             if (entityname != null)
             {
@@ -656,7 +660,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereLastXDays(string attributeName, int value, string entityname = null)
+        public Query<TEntity> WhereLastXDays(string attributeName, int value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -670,7 +674,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereLastXFiscalPeriods(string attributeName, int value, string entityname = null)
+        public Query<TEntity> WhereLastXFiscalPeriods(string attributeName, int value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -684,7 +688,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereLastXFiscalYears(string attributeName, int value, string entityname = null)
+        public Query<TEntity> WhereLastXFiscalYears(string attributeName, int value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -698,7 +702,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereLastXHours(string attributeName, int value, string entityname = null)
+        public Query<TEntity> WhereLastXHours(string attributeName, int value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -712,7 +716,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereLastXMonths(string attributeName, int value, string entityname = null)
+        public Query<TEntity> WhereLastXMonths(string attributeName, int value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -726,7 +730,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereLastXWeeks(string attributeName, int value, string entityname = null)
+        public Query<TEntity> WhereLastXWeeks(string attributeName, int value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -740,7 +744,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereLastXYears(string attributeName, int value, string entityname = null)
+        public Query<TEntity> WhereLastXYears(string attributeName, int value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -754,7 +758,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereLastYear(string attributeName, string entityname = null)
+        public Query<TEntity> WhereLastYear(string attributeName, string entityname = null)
         {
             if (entityname != null)
             {
@@ -768,7 +772,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereLessEqual(string attributeName, object value, string entityname = null)
+        public Query<TEntity> WhereLessEqual(string attributeName, object value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -782,7 +786,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereLessThan(string attributeName, object value, string entityname = null)
+        public Query<TEntity> WhereLessThan(string attributeName, object value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -796,7 +800,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereLike(string attributeName, object value, string entityname = null)
+        public Query<TEntity> WhereLike(string attributeName, object value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -810,7 +814,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereMask(string attributeName, object value, string entityname = null)
+        public Query<TEntity> WhereMask(string attributeName, object value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -824,7 +828,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereMasksSelect(string attributeName, object value, string entityname = null)
+        public Query<TEntity> WhereMasksSelect(string attributeName, object value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -838,7 +842,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereNext7Days(string attributeName, string entityname = null)
+        public Query<TEntity> WhereNext7Days(string attributeName, string entityname = null)
         {
             if (entityname != null)
             {
@@ -852,7 +856,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereNextFiscalPeriod(string attributeName, string entityname = null)
+        public Query<TEntity> WhereNextFiscalPeriod(string attributeName, string entityname = null)
         {
             if (entityname != null)
             {
@@ -866,7 +870,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereNextFiscalYear(string attributeName, string entityname = null)
+        public Query<TEntity> WhereNextFiscalYear(string attributeName, string entityname = null)
         {
             if (entityname != null)
             {
@@ -880,7 +884,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereNextMonth(string attributeName, string entityname = null)
+        public Query<TEntity> WhereNextMonth(string attributeName, string entityname = null)
         {
             if (entityname != null)
             {
@@ -894,7 +898,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereNextWeek(string attributeName, string entityname = null)
+        public Query<TEntity> WhereNextWeek(string attributeName, string entityname = null)
         {
             if (entityname != null)
             {
@@ -908,7 +912,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereNextXDays(string attributeName, int value, string entityname = null)
+        public Query<TEntity> WhereNextXDays(string attributeName, int value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -922,7 +926,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereNextXFiscalPeriods(string attributeName, int value, string entityname = null)
+        public Query<TEntity> WhereNextXFiscalPeriods(string attributeName, int value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -936,7 +940,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereNextXFiscalYears(string attributeName, int value, string entityname = null)
+        public Query<TEntity> WhereNextXFiscalYears(string attributeName, int value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -950,7 +954,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereNextXHours(string attributeName, int value, string entityname = null)
+        public Query<TEntity> WhereNextXHours(string attributeName, int value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -964,7 +968,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereNextXMonths(string attributeName, int value, string entityname = null)
+        public Query<TEntity> WhereNextXMonths(string attributeName, int value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -978,7 +982,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereNextXWeeks(string attributeName, int value, string entityname = null)
+        public Query<TEntity> WhereNextXWeeks(string attributeName, int value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -992,7 +996,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereNextXYears(string attributeName, int value, string entityname = null)
+        public Query<TEntity> WhereNextXYears(string attributeName, int value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -1006,7 +1010,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereNextYear(string attributeName, string entityname = null)
+        public Query<TEntity> WhereNextYear(string attributeName, string entityname = null)
         {
             if (entityname != null)
             {
@@ -1020,7 +1024,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereNotBetween(string attributeName, object value1, object value2, string entityname = null)
+        public Query<TEntity> WhereNotBetween(string attributeName, object value1, object value2, string entityname = null)
         {
             if (entityname != null)
             {
@@ -1034,7 +1038,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereNotEqual(string attributeName, object value, string entityname = null)
+        public Query<TEntity> WhereNotEqual(string attributeName, object value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -1048,7 +1052,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereNotEqualBusinessId(string attributeName, string entityname = null)
+        public Query<TEntity> WhereNotEqualBusinessId(string attributeName, string entityname = null)
         {
             if (entityname != null)
             {
@@ -1062,7 +1066,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereNotEqualUserId(string attributeName, string entityname = null)
+        public Query<TEntity> WhereNotEqualUserId(string attributeName, string entityname = null)
         {
             if (entityname != null)
             {
@@ -1076,35 +1080,35 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereNotIn(string entityname, string attributeName, IList value)
+        public Query<TEntity> WhereNotIn(string entityname, string attributeName, IList value)
         {
             QueryExpression.Criteria.Conditions.Add(new ConditionExpression(entityname, attributeName, ConditionOperator.NotIn, value));
 
             return this;
         }
 
-        public Query<T> WhereNotIn(string attributeName, IList value)
+        public Query<TEntity> WhereNotIn(string attributeName, IList value)
         {
             QueryExpression.Criteria.Conditions.Add(new ConditionExpression(attributeName, ConditionOperator.NotIn, value));
 
             return this;
         }
 
-        public Query<T> WhereNotIn(string attributeName, params object[] values)
+        public Query<TEntity> WhereNotIn(string attributeName, params object[] values)
         {
             QueryExpression.Criteria.AddCondition(attributeName, ConditionOperator.NotIn, values);
 
             return this;
         }
 
-        public Query<T> WhereNotIn(string entityname, string attributeName, params object[] values)
+        public Query<TEntity> WhereNotIn(string entityname, string attributeName, params object[] values)
         {
             QueryExpression.Criteria.AddCondition(entityname, attributeName, ConditionOperator.NotIn, values);
 
             return this;
         }
 
-        public Query<T> WhereNotLike(string attributeName, object value, string entityname = null)
+        public Query<TEntity> WhereNotLike(string attributeName, object value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -1118,7 +1122,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereNotMask(string attributeName, object value, string entityname = null)
+        public Query<TEntity> WhereNotMask(string attributeName, object value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -1132,7 +1136,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereNotNull(string attributeName, string entityname = null)
+        public Query<TEntity> WhereNotNull(string attributeName, string entityname = null)
         {
             if (entityname != null)
             {
@@ -1146,7 +1150,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereNotOn(string attributeName, DateTime value, string entityname = null)
+        public Query<TEntity> WhereNotOn(string attributeName, DateTime value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -1160,7 +1164,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereNotUnder(string attributeName, object value, string entityname = null)
+        public Query<TEntity> WhereNotUnder(string attributeName, object value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -1174,7 +1178,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereNull(string attributeName, string entityname = null)
+        public Query<TEntity> WhereNull(string attributeName, string entityname = null)
         {
             if (entityname != null)
             {
@@ -1188,7 +1192,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereOlderThanXDays(string attributeName, int value, string entityname = null)
+        public Query<TEntity> WhereOlderThanXDays(string attributeName, int value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -1202,7 +1206,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereOlderThanXHours(string attributeName, int value, string entityname = null)
+        public Query<TEntity> WhereOlderThanXHours(string attributeName, int value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -1216,7 +1220,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereOlderThanXMinutes(string attributeName, int value, string entityname = null)
+        public Query<TEntity> WhereOlderThanXMinutes(string attributeName, int value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -1230,7 +1234,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereOlderThanXMonths(string attributeName, int value, string entityname = null)
+        public Query<TEntity> WhereOlderThanXMonths(string attributeName, int value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -1244,7 +1248,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereOlderThanXWeeks(string attributeName, int value, string entityname = null)
+        public Query<TEntity> WhereOlderThanXWeeks(string attributeName, int value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -1258,7 +1262,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereOlderThanXYears(string attributeName, int value, string entityname = null)
+        public Query<TEntity> WhereOlderThanXYears(string attributeName, int value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -1272,7 +1276,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereOn(string attributeName, DateTime value, string entityname = null)
+        public Query<TEntity> WhereOn(string attributeName, DateTime value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -1286,7 +1290,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereOnOrAfter(string attributeName, DateTime value, string entityname = null)
+        public Query<TEntity> WhereOnOrAfter(string attributeName, DateTime value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -1300,7 +1304,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereOnOrBefore(string attributeName, DateTime value, string entityname = null)
+        public Query<TEntity> WhereOnOrBefore(string attributeName, DateTime value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -1314,7 +1318,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereThisFiscalPeriod(string attributeName, string entityname = null)
+        public Query<TEntity> WhereThisFiscalPeriod(string attributeName, string entityname = null)
         {
             if (entityname != null)
             {
@@ -1328,7 +1332,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereThisFiscalYear(string attributeName, string entityname = null)
+        public Query<TEntity> WhereThisFiscalYear(string attributeName, string entityname = null)
         {
             if (entityname != null)
             {
@@ -1342,7 +1346,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereThisMonth(string attributeName, string entityname = null)
+        public Query<TEntity> WhereThisMonth(string attributeName, string entityname = null)
         {
             if (entityname != null)
             {
@@ -1356,7 +1360,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereThisWeek(string attributeName, string entityname = null)
+        public Query<TEntity> WhereThisWeek(string attributeName, string entityname = null)
         {
             if (entityname != null)
             {
@@ -1370,7 +1374,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereThisYear(string attributeName, string entityname = null)
+        public Query<TEntity> WhereThisYear(string attributeName, string entityname = null)
         {
             if (entityname != null)
             {
@@ -1384,7 +1388,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereToday(string attributeName, string entityname = null)
+        public Query<TEntity> WhereToday(string attributeName, string entityname = null)
         {
             if (entityname != null)
             {
@@ -1398,7 +1402,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereTomorrow(string attributeName, string entityname = null)
+        public Query<TEntity> WhereTomorrow(string attributeName, string entityname = null)
         {
             if (entityname != null)
             {
@@ -1412,7 +1416,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereUnder(string attributeName, object value, string entityname = null)
+        public Query<TEntity> WhereUnder(string attributeName, object value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -1426,7 +1430,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereUnderOrEqual(string attributeName, object value, string entityname = null)
+        public Query<TEntity> WhereUnderOrEqual(string attributeName, object value, string entityname = null)
         {
             if (entityname != null)
             {
@@ -1440,7 +1444,7 @@ namespace MscrmTools.FluentQueryExpressions
             return this;
         }
 
-        public Query<T> WhereYesterday(string attributeName, string entityname = null)
+        public Query<TEntity> WhereYesterday(string attributeName, string entityname = null)
         {
             if (entityname != null)
             {
@@ -1458,23 +1462,33 @@ namespace MscrmTools.FluentQueryExpressions
 
         #region Service calls
 
-        public List<T> GetAll(IOrganizationService service)
+        public List<TEntity> GetAll()
+        {
+            if (OrganizationService == null)
+            {
+                throw new InvalidOperationException($"{nameof(OrganizationService)} must be initialized prior to using this method.");
+            }
+
+            return GetAll(OrganizationService);
+        }
+
+        public List<TEntity> GetAll(IOrganizationService service)
         {
             if (QueryExpression.TopCount.HasValue)
             {
                 return service.RetrieveMultiple(QueryExpression)
                     .Entities
-                    .Select(e => e.ToEntity<T>())
+                    .Select(e => e.ToEntity<TEntity>())
                     .ToList();
             }
 
             EntityCollection ec;
-            var list = new List<T>();
+            var list = new List<TEntity>();
             do
             {
                 ec = service.RetrieveMultiple(QueryExpression);
 
-                list.AddRange(ec.Entities.Select(e => e.ToEntity<T>()));
+                list.AddRange(ec.Entities.Select(e => e.ToEntity<TEntity>()));
 
                 NextPage(ec.PagingCookie);
             } while (ec.MoreRecords);
@@ -1482,24 +1496,73 @@ namespace MscrmTools.FluentQueryExpressions
             return list;
         }
 
-        public T GetFirst(IOrganizationService service)
+        public TEntity GetFirst()
         {
-            return service.RetrieveMultiple(QueryExpression).Entities.First().ToEntity<T>();
+            if (OrganizationService == null)
+            {
+                throw new InvalidOperationException($"{nameof(OrganizationService)} must be initialized prior to using this method.");
+            }
+            return GetFirst(OrganizationService);
         }
 
-        public T GetFirstOrDefault(IOrganizationService service)
+        public TEntity GetFirst(IOrganizationService service)
         {
-            return service.RetrieveMultiple(QueryExpression).Entities.FirstOrDefault()?.ToEntity<T>();
+            return service.RetrieveMultiple(QueryExpression).Entities.First().ToEntity<TEntity>();
         }
 
-        public T GetLast(IOrganizationService service)
+        public TEntity GetFirstOrDefault()
         {
-            return service.RetrieveMultiple(QueryExpression).Entities.Last().ToEntity<T>();
+            if (OrganizationService == null)
+            {
+                throw new InvalidOperationException($"{nameof(OrganizationService)} must be initialized prior to using this method.");
+            }
+
+            return GetFirstOrDefault(OrganizationService);
         }
 
-        public T GetLastOrDefault(IOrganizationService service)
+        public TEntity GetFirstOrDefault(IOrganizationService service)
         {
-            return service.RetrieveMultiple(QueryExpression).Entities.LastOrDefault()?.ToEntity<T>();
+            return service.RetrieveMultiple(QueryExpression).Entities.FirstOrDefault()?.ToEntity<TEntity>();
+        }
+
+        public TEntity GetLast()
+        {
+            if (OrganizationService == null)
+            {
+                throw new InvalidOperationException($"{nameof(OrganizationService)} must be initialized prior to using this method.");
+            }
+
+            return GetLast(OrganizationService);
+        }
+
+        public TEntity GetLast(IOrganizationService service)
+        {
+            return service.RetrieveMultiple(QueryExpression).Entities.Last().ToEntity<TEntity>();
+        }
+
+        public TEntity GetLastOrDefault()
+        {
+            if (OrganizationService == null)
+            {
+                throw new InvalidOperationException($"{nameof(OrganizationService)} must be initialized prior to using this method.");
+            }
+
+            return GetLastOrDefault(OrganizationService);
+        }
+
+        public TEntity GetLastOrDefault(IOrganizationService service)
+        {
+            return service.RetrieveMultiple(QueryExpression).Entities.LastOrDefault()?.ToEntity<TEntity>();
+        }
+
+        public EntityCollection GetResults()
+        {
+            if (OrganizationService == null)
+            {
+                throw new InvalidOperationException($"{nameof(OrganizationService)} must be initialized prior to using this method.");
+            }
+
+            return GetResults(OrganizationService);
         }
 
         public EntityCollection GetResults(IOrganizationService service)
@@ -1507,17 +1570,47 @@ namespace MscrmTools.FluentQueryExpressions
             return service.RetrieveMultiple(QueryExpression);
         }
 
-        public T GetSingle(IOrganizationService service)
+        public TEntity GetSingle()
         {
-            return service.RetrieveMultiple(QueryExpression).Entities.Single().ToEntity<T>();
+            if (OrganizationService == null)
+            {
+                throw new InvalidOperationException($"{nameof(OrganizationService)} must be initialized prior to using this method.");
+            }
+
+            return GetSingle(OrganizationService);
         }
 
-        public T GetSingleOrDefault(IOrganizationService service)
+        public TEntity GetSingle(IOrganizationService service)
         {
-            return service.RetrieveMultiple(QueryExpression).Entities.SingleOrDefault()?.ToEntity<T>();
+            return service.RetrieveMultiple(QueryExpression).Entities.Single().ToEntity<TEntity>();
         }
 
-        public T GetById(Guid id, IOrganizationService service, bool isActivityEntity = false)
+        public TEntity GetSingleOrDefault()
+        {
+            if (OrganizationService == null)
+            {
+                throw new InvalidOperationException($"{nameof(OrganizationService)} must be initialized prior to using this method.");
+            }
+
+            return GetSingleOrDefault(OrganizationService);
+        }
+
+        public TEntity GetSingleOrDefault(IOrganizationService service)
+        {
+            return service.RetrieveMultiple(QueryExpression).Entities.SingleOrDefault()?.ToEntity<TEntity>();
+        }
+
+        public TEntity GetById(Guid id, bool isActivityEntity = false)
+        {
+            if (OrganizationService == null)
+            {
+                throw new InvalidOperationException($"{nameof(OrganizationService)} must be initialized prior to using this method.");
+            }
+
+            return GetById(id, OrganizationService, isActivityEntity);
+        }
+
+        public TEntity GetById(Guid id, IOrganizationService service, bool isActivityEntity = false)
         {
             QueryExpression.Criteria = new FilterExpression
             {
