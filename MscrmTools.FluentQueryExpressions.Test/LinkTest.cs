@@ -17,8 +17,8 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId, JoinOperator.LeftOuter)
                     .AddFilters(LogicalOperator.Or, new Filter()));
 
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.FilterOperator, LogicalOperator.Or);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Filters.Count, 1);
+            Assert.Equal(LogicalOperator.Or, query.QueryExpression.LinkEntities.First().LinkCriteria.FilterOperator);
+            Assert.Single(query.QueryExpression.LinkEntities.First().LinkCriteria.Filters);
         }
 
         [Fact]
@@ -32,8 +32,8 @@ namespace MscrmTools.FluentQueryExpressions.Test
                     )
                 );
 
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.FilterOperator, LogicalOperator.And);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Filters.Count, 2);
+            Assert.Equal(LogicalOperator.And, query.QueryExpression.LinkEntities.First().LinkCriteria.FilterOperator);
+            Assert.Equal(2, query.QueryExpression.LinkEntities.First().LinkCriteria.Filters.Count);
         }
 
         [Fact]
@@ -43,7 +43,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId, JoinOperator.LeftOuter)
                     .AddLink(new Link<Task>(Task.Fields.RegardingObjectId, Contact.Fields.ContactId)));
 
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkEntities.Count, 1);
+            Assert.Single(query.QueryExpression.LinkEntities.First().LinkEntities);
         }
 
         [Fact]
@@ -53,7 +53,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId, JoinOperator.LeftOuter)
                     .AddLink(new Link(Task.EntityLogicalName, Task.Fields.RegardingObjectId, Contact.Fields.ContactId)));
 
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkEntities.Count, 1);
+            Assert.Single(query.QueryExpression.LinkEntities.First().LinkEntities);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkEntities.First().LinkFromEntityName, Contact.EntityLogicalName);
         }
 
@@ -66,7 +66,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
                     .Order(Contact.Fields.FullName, OrderType.Ascending));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().Orders.First().AttributeName, Contact.Fields.FullName);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().Orders.First().OrderType, OrderType.Ascending);
+            Assert.Equal(OrderType.Ascending, query.QueryExpression.LinkEntities.First().Orders.First().OrderType);
         }
 
         [Fact]
@@ -75,13 +75,13 @@ namespace MscrmTools.FluentQueryExpressions.Test
             var query = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId, JoinOperator.LeftOuter));
 
-            Assert.Equal(query.QueryExpression.LinkEntities.Count, 1);
+            Assert.Single(query.QueryExpression.LinkEntities);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkFromEntityName, Account.EntityLogicalName);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkFromAttributeName, Account.Fields.AccountId);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkToAttributeName, Contact.Fields.ParentCustomerId);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkToEntityName, Contact.EntityLogicalName);
             Assert.Equal(query.QueryExpression.LinkEntities.First().EntityAlias, Contact.EntityLogicalName);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().JoinOperator, JoinOperator.LeftOuter);
+            Assert.Equal(JoinOperator.LeftOuter, query.QueryExpression.LinkEntities.First().JoinOperator);
         }
 
         [Fact]
@@ -93,15 +93,15 @@ namespace MscrmTools.FluentQueryExpressions.Test
                     .SetDefaultFilterOperator(LogicalOperator.Or)
                     .Select(true));
 
-            Assert.Equal(query.QueryExpression.LinkEntities.Count, 1);
+            Assert.Single(query.QueryExpression.LinkEntities);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkFromEntityName, Account.EntityLogicalName);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkFromAttributeName, Account.Fields.AccountId);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkToAttributeName, Contact.Fields.ParentCustomerId);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkToEntityName, Contact.EntityLogicalName);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().EntityAlias, "toto");
-            Assert.Equal(query.QueryExpression.LinkEntities.First().JoinOperator, JoinOperator.LeftOuter);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.FilterOperator, LogicalOperator.Or);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().Columns.AllColumns, true);
+            Assert.Equal("toto", query.QueryExpression.LinkEntities.First().EntityAlias);
+            Assert.Equal(JoinOperator.LeftOuter, query.QueryExpression.LinkEntities.First().JoinOperator);
+            Assert.Equal(LogicalOperator.Or, query.QueryExpression.LinkEntities.First().LinkCriteria.FilterOperator);
+            Assert.True(query.QueryExpression.LinkEntities.First().Columns.AllColumns);
         }
 
         [Fact]
@@ -113,15 +113,15 @@ namespace MscrmTools.FluentQueryExpressions.Test
                     .SetDefaultFilterOperator(LogicalOperator.Or)
                     .Select());
 
-            Assert.Equal(query.QueryExpression.LinkEntities.Count, 1);
+            Assert.Single(query.QueryExpression.LinkEntities);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkFromEntityName, Account.EntityLogicalName);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkFromAttributeName, Account.Fields.AccountId);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkToAttributeName, Contact.Fields.ParentCustomerId);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkToEntityName, Contact.EntityLogicalName);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().EntityAlias, "toto");
-            Assert.Equal(query.QueryExpression.LinkEntities.First().JoinOperator, JoinOperator.LeftOuter);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.FilterOperator, LogicalOperator.Or);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().Columns.Columns.Count, 0);
+            Assert.Equal("toto", query.QueryExpression.LinkEntities.First().EntityAlias);
+            Assert.Equal(JoinOperator.LeftOuter, query.QueryExpression.LinkEntities.First().JoinOperator);
+            Assert.Equal(LogicalOperator.Or, query.QueryExpression.LinkEntities.First().LinkCriteria.FilterOperator);
+            Assert.Empty(query.QueryExpression.LinkEntities.First().Columns.Columns);
         }
 
         [Fact]
@@ -133,14 +133,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
                     .SetDefaultFilterOperator(LogicalOperator.Or)
                     .Select(Contact.Fields.FullName));
 
-            Assert.Equal(query.QueryExpression.LinkEntities.Count, 1);
+            Assert.Single(query.QueryExpression.LinkEntities);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkFromEntityName, Account.EntityLogicalName);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkFromAttributeName, Account.Fields.AccountId);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkToAttributeName, Contact.Fields.ParentCustomerId);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkToEntityName, Contact.EntityLogicalName);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().EntityAlias, "toto");
-            Assert.Equal(query.QueryExpression.LinkEntities.First().JoinOperator, JoinOperator.LeftOuter);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.FilterOperator, LogicalOperator.Or);
+            Assert.Equal("toto", query.QueryExpression.LinkEntities.First().EntityAlias);
+            Assert.Equal(JoinOperator.LeftOuter, query.QueryExpression.LinkEntities.First().JoinOperator);
+            Assert.Equal(LogicalOperator.Or, query.QueryExpression.LinkEntities.First().LinkCriteria.FilterOperator);
             Assert.Equal(query.QueryExpression.LinkEntities.First().Columns.Columns.First(), Contact.Fields.FullName);
         }
 
@@ -150,13 +150,13 @@ namespace MscrmTools.FluentQueryExpressions.Test
             var query = new Query<Account>()
                 .AddLink(new Link(Contact.EntityLogicalName, Contact.Fields.ParentCustomerId, Account.Fields.AccountId, JoinOperator.LeftOuter));
 
-            Assert.Equal(query.QueryExpression.LinkEntities.Count, 1);
+            Assert.Single(query.QueryExpression.LinkEntities);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkFromEntityName, Account.EntityLogicalName);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkFromAttributeName, Account.Fields.AccountId);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkToAttributeName, Contact.Fields.ParentCustomerId);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkToEntityName, Contact.EntityLogicalName);
             Assert.Equal(query.QueryExpression.LinkEntities.First().EntityAlias, Contact.EntityLogicalName);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().JoinOperator, JoinOperator.LeftOuter);
+            Assert.Equal(JoinOperator.LeftOuter, query.QueryExpression.LinkEntities.First().JoinOperator);
         }
 
         #region Conditions
@@ -169,7 +169,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).Where(Account.Fields.AccountId, ConditionOperator.Above, guid));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.AccountId);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.Above);
+            Assert.Equal(ConditionOperator.Above, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single(), guid);
 
             var query2 = new Query<Account>()
@@ -177,7 +177,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.AccountId);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.Above);
+            Assert.Equal(ConditionOperator.Above, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single(), guid);
         }
 
@@ -189,7 +189,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereAbove(Account.Fields.AccountId, guid));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.AccountId);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.Above);
+            Assert.Equal(ConditionOperator.Above, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single(), guid);
 
             var query2 = new Query<Account>()
@@ -197,7 +197,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.AccountId);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.Above);
+            Assert.Equal(ConditionOperator.Above, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single(), guid);
         }
 
@@ -209,7 +209,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereAboveOrEqual(Account.Fields.AccountId, guid));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.AccountId);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.AboveOrEqual);
+            Assert.Equal(ConditionOperator.AboveOrEqual, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single(), guid);
 
             var query2 = new Query<Account>()
@@ -217,7 +217,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.AccountId);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.AboveOrEqual);
+            Assert.Equal(ConditionOperator.AboveOrEqual, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single(), guid);
         }
 
@@ -228,16 +228,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereBeginsWith(Account.Fields.Name, "test"));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.Name);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.BeginsWith);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single(), "test");
+            Assert.Equal(ConditionOperator.BeginsWith, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal("test", query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereBeginsWith(Account.Fields.Name, "test", Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.Name);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.BeginsWith);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single(), "test");
+            Assert.Equal(ConditionOperator.BeginsWith, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal("test", query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single());
         }
 
         [Fact]
@@ -247,18 +247,18 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereBetween(Account.Fields.NumberOfEmployees, 10, 50));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.NumberOfEmployees);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.Between);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[0], 10);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[1], 50);
+            Assert.Equal(ConditionOperator.Between, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[0]);
+            Assert.Equal(50, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[1]);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereBetween(Account.Fields.NumberOfEmployees, 10, 50, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.NumberOfEmployees);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.Between);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[0], 10);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[1], 50);
+            Assert.Equal(ConditionOperator.Between, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[0]);
+            Assert.Equal(50, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[1]);
         }
 
         [Fact]
@@ -269,7 +269,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereChildOf(Account.Fields.AccountId, guid));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.AccountId);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.ChildOf);
+            Assert.Equal(ConditionOperator.ChildOf, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single(), guid);
 
             var query2 = new Query<Account>()
@@ -277,7 +277,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.AccountId);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.ChildOf);
+            Assert.Equal(ConditionOperator.ChildOf, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single(), guid);
         }
 
@@ -288,16 +288,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereContains(Account.Fields.Name, "test"));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.Name);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.Contains);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single(), "test");
+            Assert.Equal(ConditionOperator.Contains, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal("test", query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereContains(Account.Fields.Name, "test", Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.Name);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.Contains);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single(), "test");
+            Assert.Equal(ConditionOperator.Contains, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal("test", query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single());
         }
 
         [Fact]
@@ -307,20 +307,20 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereContainValues(Account.Fields.CustomerTypeCode, 1, 2, 3));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CustomerTypeCode);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.ContainValues);
-            Assert.True(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Contains(1));
-            Assert.True(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Contains(2));
-            Assert.True(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Contains(3));
+            Assert.Equal(ConditionOperator.ContainValues, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Contains(1, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
+            Assert.Contains(2, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
+            Assert.Contains(3, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereContainValues(Account.EntityLogicalName, Account.Fields.CustomerTypeCode, 1, 2, 3));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CustomerTypeCode);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.ContainValues);
-            Assert.True(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Contains(1));
-            Assert.True(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Contains(2));
-            Assert.True(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Contains(3));
+            Assert.Equal(ConditionOperator.ContainValues, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Contains(1, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
+            Assert.Contains(2, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
+            Assert.Contains(3, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -330,16 +330,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereDoesNotBeginWith(Account.Fields.Name, "test"));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.Name);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.DoesNotBeginWith);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single(), "test");
+            Assert.Equal(ConditionOperator.DoesNotBeginWith, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal("test", query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereDoesNotBeginWith(Account.Fields.Name, "test", Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.Name);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.DoesNotBeginWith);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single(), "test");
+            Assert.Equal(ConditionOperator.DoesNotBeginWith, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal("test", query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single());
         }
 
         [Fact]
@@ -349,16 +349,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereDoesNotContain(Account.Fields.Name, "test"));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.Name);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.DoesNotContain);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single(), "test");
+            Assert.Equal(ConditionOperator.DoesNotContain, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal("test", query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereDoesNotContain(Account.Fields.Name, "test", Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.Name);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.DoesNotContain);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single(), "test");
+            Assert.Equal(ConditionOperator.DoesNotContain, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal("test", query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single());
         }
 
         [Fact]
@@ -368,20 +368,20 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereDoesNotContainValues(Account.Fields.CustomerTypeCode, 1, 2, 3));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CustomerTypeCode);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.DoesNotContainValues);
-            Assert.True(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Contains(1));
-            Assert.True(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Contains(2));
-            Assert.True(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Contains(3));
+            Assert.Equal(ConditionOperator.DoesNotContainValues, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Contains(1, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
+            Assert.Contains(2, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
+            Assert.Contains(3, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereDoesNotContainValues(Account.EntityLogicalName, Account.Fields.CustomerTypeCode, 1, 2, 3));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CustomerTypeCode);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.DoesNotContainValues);
-            Assert.True(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Contains(1));
-            Assert.True(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Contains(2));
-            Assert.True(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Contains(3));
+            Assert.Equal(ConditionOperator.DoesNotContainValues, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Contains(1, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
+            Assert.Contains(2, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
+            Assert.Contains(3, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -391,16 +391,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereDoesNotEndWith(Account.Fields.Name, "test"));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.Name);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.DoesNotEndWith);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single(), "test");
+            Assert.Equal(ConditionOperator.DoesNotEndWith, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal("test", query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereDoesNotEndWith(Account.Fields.Name, "test", Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.Name);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.DoesNotEndWith);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single(), "test");
+            Assert.Equal(ConditionOperator.DoesNotEndWith, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal("test", query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single());
         }
 
         [Fact]
@@ -410,16 +410,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereEndsWith(Account.Fields.Name, "test"));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.Name);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.EndsWith);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single(), "test");
+            Assert.Equal(ConditionOperator.EndsWith, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal("test", query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereEndsWith(Account.Fields.Name, "test", Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.Name);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.EndsWith);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single(), "test");
+            Assert.Equal(ConditionOperator.EndsWith, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal("test", query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single());
         }
 
         [Fact]
@@ -429,16 +429,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereEqual(Account.Fields.Name, "test"));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.Name);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.Equal);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single(), "test");
+            Assert.Equal(ConditionOperator.Equal, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal("test", query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereEqual(Account.Fields.Name, "test", Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.Name);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.Equal);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single(), "test");
+            Assert.Equal(ConditionOperator.Equal, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal("test", query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Single());
         }
 
         [Fact]
@@ -448,16 +448,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereEqualBusinessId(Account.Fields.OwningBusinessUnit));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.OwningBusinessUnit);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.EqualBusinessId);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.EqualBusinessId, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereEqualBusinessId(Account.Fields.OwningBusinessUnit, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.OwningBusinessUnit);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.EqualBusinessId);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.EqualBusinessId, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -467,16 +467,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereEqualUserId(Account.Fields.OwnerId));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.OwnerId);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.EqualUserId);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.EqualUserId, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereEqualUserId(Account.Fields.OwnerId, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.OwnerId);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.EqualUserId);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.EqualUserId, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -485,17 +485,17 @@ namespace MscrmTools.FluentQueryExpressions.Test
             var query = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereEqualUserLanguage("no_language_attribute"));
 
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, "no_language_attribute");
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.EqualUserLanguage);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal("no_language_attribute", query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName);
+            Assert.Equal(ConditionOperator.EqualUserLanguage, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereEqualUserLanguage("no_language_attribute", Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, "no_language_attribute");
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.EqualUserLanguage);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal("no_language_attribute", query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName);
+            Assert.Equal(ConditionOperator.EqualUserLanguage, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -505,16 +505,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereEqualUserOrUserHierarchy(Account.Fields.OwnerId));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.OwnerId);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.EqualUserOrUserHierarchy);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.EqualUserOrUserHierarchy, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereEqualUserOrUserHierarchy(Account.Fields.OwnerId, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.OwnerId);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.EqualUserOrUserHierarchy);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.EqualUserOrUserHierarchy, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -524,16 +524,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereEqualUserOrUserHierarchyAndTeams(Account.Fields.OwnerId));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.OwnerId);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.EqualUserOrUserHierarchyAndTeams);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.EqualUserOrUserHierarchyAndTeams, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereEqualUserOrUserHierarchyAndTeams(Account.Fields.OwnerId, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.OwnerId);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.EqualUserOrUserHierarchyAndTeams);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.EqualUserOrUserHierarchyAndTeams, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -543,16 +543,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereEqualUserOrUserTeams(Account.Fields.OwnerId));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.OwnerId);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.EqualUserOrUserTeams);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.EqualUserOrUserTeams, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereEqualUserOrUserTeams(Account.Fields.OwnerId, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.OwnerId);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.EqualUserOrUserTeams);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.EqualUserOrUserTeams, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -562,16 +562,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereEqualUserTeams(Account.Fields.OwnerId));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.OwnerId);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.EqualUserTeams);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.EqualUserTeams, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereEqualUserTeams(Account.Fields.OwnerId, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.OwnerId);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.EqualUserTeams);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.EqualUserTeams, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -581,16 +581,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereGreaterEqual(Account.Fields.NumberOfEmployees, 10));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.NumberOfEmployees);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.GreaterEqual);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.GreaterEqual, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereGreaterEqual(Account.Fields.NumberOfEmployees, 10, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.NumberOfEmployees);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.GreaterEqual);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.GreaterEqual, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
         }
 
         [Fact]
@@ -600,16 +600,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereGreaterThan(Account.Fields.NumberOfEmployees, 10));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.NumberOfEmployees);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.GreaterThan);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.GreaterThan, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereGreaterThan(Account.Fields.NumberOfEmployees, 10, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.NumberOfEmployees);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.GreaterThan);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.GreaterThan, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
         }
 
         [Fact]
@@ -619,20 +619,20 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereIn(Account.Fields.CustomerTypeCode, 1, 2, 3));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CustomerTypeCode);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.In);
-            Assert.True(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Contains(1));
-            Assert.True(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Contains(2));
-            Assert.True(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Contains(3));
+            Assert.Equal(ConditionOperator.In, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Contains(1, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
+            Assert.Contains(2, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
+            Assert.Contains(3, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereIn(Account.EntityLogicalName, Account.Fields.CustomerTypeCode, 1, 2, 3));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CustomerTypeCode);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.In);
-            Assert.True(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Contains(1));
-            Assert.True(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Contains(2));
-            Assert.True(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Contains(3));
+            Assert.Equal(ConditionOperator.In, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Contains(1, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
+            Assert.Contains(2, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
+            Assert.Contains(3, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -642,16 +642,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereInFiscalPeriod(Account.Fields.CreatedOn, 1));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.InFiscalPeriod);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 1);
+            Assert.Equal(ConditionOperator.InFiscalPeriod, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(1, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereInFiscalPeriod(Account.Fields.CreatedOn, 1, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.InFiscalPeriod);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 1);
+            Assert.Equal(ConditionOperator.InFiscalPeriod, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(1, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
         }
 
         [Fact]
@@ -661,18 +661,18 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereInFiscalPeriodAndYear(Account.Fields.CreatedOn, 1, 2018));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.InFiscalPeriodAndYear);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[0], 1);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[1], 2018);
+            Assert.Equal(ConditionOperator.InFiscalPeriodAndYear, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(1, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[0]);
+            Assert.Equal(2018, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[1]);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereInFiscalPeriodAndYear(Account.Fields.CreatedOn, 1, 2018, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.InFiscalPeriodAndYear);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[0], 1);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[1], 2018);
+            Assert.Equal(ConditionOperator.InFiscalPeriodAndYear, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(1, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[0]);
+            Assert.Equal(2018, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[1]);
         }
 
         [Fact]
@@ -682,16 +682,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereInFiscalYear(Account.Fields.CreatedOn, 2018));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.InFiscalYear);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 2018);
+            Assert.Equal(ConditionOperator.InFiscalYear, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(2018, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereInFiscalYear(Account.Fields.CreatedOn, 2018, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.InFiscalYear);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 2018);
+            Assert.Equal(ConditionOperator.InFiscalYear, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(2018, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
         }
 
         [Fact]
@@ -702,8 +702,8 @@ namespace MscrmTools.FluentQueryExpressions.Test
                     .WhereIn(Account.Fields.CustomerTypeCode, new List<int> { 1, 2, 3 }));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CustomerTypeCode);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.In);
-            Assert.True(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values is IList);
+            Assert.Equal(ConditionOperator.In, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.IsAssignableFrom<IList>(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId)
@@ -711,8 +711,8 @@ namespace MscrmTools.FluentQueryExpressions.Test
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CustomerTypeCode);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.In);
-            Assert.True(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values is IList);
+            Assert.Equal(ConditionOperator.In, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.IsAssignableFrom<IList>(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -722,18 +722,18 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereInOrAfterFiscalPeriodAndYear(Account.Fields.CreatedOn, 1, 2018));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.InOrAfterFiscalPeriodAndYear);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[0], 1);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[1], 2018);
+            Assert.Equal(ConditionOperator.InOrAfterFiscalPeriodAndYear, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(1, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[0]);
+            Assert.Equal(2018, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[1]);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereInOrAfterFiscalPeriodAndYear(Account.Fields.CreatedOn, 1, 2018, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.InOrAfterFiscalPeriodAndYear);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[0], 1);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[1], 2018);
+            Assert.Equal(ConditionOperator.InOrAfterFiscalPeriodAndYear, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(1, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[0]);
+            Assert.Equal(2018, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[1]);
         }
 
         [Fact]
@@ -743,18 +743,18 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereInOrBeforeFiscalPeriodAndYear(Account.Fields.CreatedOn, 1, 2018));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.InOrBeforeFiscalPeriodAndYear);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[0], 1);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[1], 2018);
+            Assert.Equal(ConditionOperator.InOrBeforeFiscalPeriodAndYear, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(1, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[0]);
+            Assert.Equal(2018, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[1]);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereInOrBeforeFiscalPeriodAndYear(Account.Fields.CreatedOn, 1, 2018, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.InOrBeforeFiscalPeriodAndYear);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[0], 1);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[1], 2018);
+            Assert.Equal(ConditionOperator.InOrBeforeFiscalPeriodAndYear, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(1, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[0]);
+            Assert.Equal(2018, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[1]);
         }
 
         [Fact]
@@ -764,16 +764,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereLast7Days(Account.Fields.CreatedOn));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.Last7Days);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.Last7Days, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereLast7Days(Account.Fields.CreatedOn, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.Last7Days);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.Last7Days, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -783,16 +783,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereLastFiscalPeriod(Account.Fields.CreatedOn));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.LastFiscalPeriod);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.LastFiscalPeriod, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereLastFiscalPeriod(Account.Fields.CreatedOn, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.LastFiscalPeriod);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.LastFiscalPeriod, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -802,16 +802,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereLastFiscalYear(Account.Fields.CreatedOn));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.LastFiscalYear);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.LastFiscalYear, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereLastFiscalYear(Account.Fields.CreatedOn, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.LastFiscalYear);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.LastFiscalYear, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -821,16 +821,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereLastMonth(Account.Fields.CreatedOn));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.LastMonth);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.LastMonth, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereLastMonth(Account.Fields.CreatedOn, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.LastMonth);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.LastMonth, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -840,16 +840,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereLastWeek(Account.Fields.CreatedOn));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.LastWeek);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.LastWeek, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereLastWeek(Account.Fields.CreatedOn, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.LastWeek);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.LastWeek, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -859,16 +859,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereLastXDays(Account.Fields.CreatedOn, 10));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.LastXDays);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.LastXDays, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereLastXDays(Account.Fields.CreatedOn, 10, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.LastXDays);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.LastXDays, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
         }
 
         [Fact]
@@ -878,16 +878,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereLastXFiscalPeriods(Account.Fields.CreatedOn, 10));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.LastXFiscalPeriods);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.LastXFiscalPeriods, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereLastXFiscalPeriods(Account.Fields.CreatedOn, 10, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.LastXFiscalPeriods);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.LastXFiscalPeriods, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
         }
 
         [Fact]
@@ -897,16 +897,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereLastXFiscalYears(Account.Fields.CreatedOn, 10));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.LastXFiscalYears);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.LastXFiscalYears, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereLastXFiscalYears(Account.Fields.CreatedOn, 10, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.LastXFiscalYears);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.LastXFiscalYears, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
         }
 
         [Fact]
@@ -916,16 +916,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereLastXHours(Account.Fields.CreatedOn, 10));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.LastXHours);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.LastXHours, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereLastXHours(Account.Fields.CreatedOn, 10, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.LastXHours);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.LastXHours, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
         }
 
         [Fact]
@@ -935,16 +935,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereLastXMonths(Account.Fields.CreatedOn, 10));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.LastXMonths);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.LastXMonths, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereLastXMonths(Account.Fields.CreatedOn, 10, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.LastXMonths);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.LastXMonths, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
         }
 
         [Fact]
@@ -954,16 +954,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereLastXWeeks(Account.Fields.CreatedOn, 10));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.LastXWeeks);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.LastXWeeks, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereLastXWeeks(Account.Fields.CreatedOn, 10, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.LastXWeeks);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.LastXWeeks, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
         }
 
         [Fact]
@@ -973,16 +973,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereLastXYears(Account.Fields.CreatedOn, 10));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.LastXYears);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.LastXYears, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereLastXYears(Account.Fields.CreatedOn, 10, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.LastXYears);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.LastXYears, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
         }
 
         [Fact]
@@ -992,16 +992,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereLastYear(Account.Fields.CreatedOn));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.LastYear);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.LastYear, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereLastYear(Account.Fields.CreatedOn, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.LastYear);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.LastYear, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -1011,16 +1011,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereLessEqual(Account.Fields.NumberOfEmployees, 10));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.NumberOfEmployees);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.LessEqual);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.LessEqual, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereLessEqual(Account.Fields.NumberOfEmployees, 10, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.NumberOfEmployees);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.LessEqual);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.LessEqual, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
         }
 
         [Fact]
@@ -1030,16 +1030,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereLessThan(Account.Fields.NumberOfEmployees, 10));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.NumberOfEmployees);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.LessThan);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.LessThan, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereLessThan(Account.Fields.NumberOfEmployees, 10, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.NumberOfEmployees);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.LessThan);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.LessThan, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
         }
 
         [Fact]
@@ -1049,16 +1049,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereLike(Account.Fields.Name, "%test%"));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.Name);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.Like);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), "%test%");
+            Assert.Equal(ConditionOperator.Like, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal("%test%", query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereLike(Account.Fields.Name, "%test%", Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.Name);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.Like);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), "%test%");
+            Assert.Equal(ConditionOperator.Like, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal("%test%", query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
         }
 
         [Fact]
@@ -1069,7 +1069,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereMask(Account.Fields.Name, obj));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.Name);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.Mask);
+            Assert.Equal(ConditionOperator.Mask, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), obj);
 
             var query2 = new Query<Account>()
@@ -1077,7 +1077,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.Name);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.Mask);
+            Assert.Equal(ConditionOperator.Mask, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), obj);
         }
 
@@ -1089,7 +1089,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereMasksSelect(Account.Fields.Name, obj));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.Name);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.MasksSelect);
+            Assert.Equal(ConditionOperator.MasksSelect, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), obj);
 
             var query2 = new Query<Account>()
@@ -1097,7 +1097,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.Name);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.MasksSelect);
+            Assert.Equal(ConditionOperator.MasksSelect, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), obj);
         }
 
@@ -1108,16 +1108,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNext7Days(Account.Fields.CreatedOn));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.Next7Days);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.Next7Days, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNext7Days(Account.Fields.CreatedOn, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.Next7Days);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.Next7Days, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -1127,16 +1127,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNextFiscalPeriod(Account.Fields.CreatedOn));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NextFiscalPeriod);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.NextFiscalPeriod, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNextFiscalPeriod(Account.Fields.CreatedOn, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NextFiscalPeriod);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.NextFiscalPeriod, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -1146,16 +1146,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNextFiscalYear(Account.Fields.CreatedOn));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NextFiscalYear);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.NextFiscalYear, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNextFiscalYear(Account.Fields.CreatedOn, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NextFiscalYear);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.NextFiscalYear, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -1165,16 +1165,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNextMonth(Account.Fields.CreatedOn));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NextMonth);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.NextMonth, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNextMonth(Account.Fields.CreatedOn, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NextMonth);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.NextMonth, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -1184,16 +1184,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNextWeek(Account.Fields.CreatedOn));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NextWeek);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.NextWeek, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNextWeek(Account.Fields.CreatedOn, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NextWeek);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.NextWeek, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -1203,16 +1203,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNextXDays(Account.Fields.CreatedOn, 10));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NextXDays);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.NextXDays, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNextXDays(Account.Fields.CreatedOn, 10, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NextXDays);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.NextXDays, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
         }
 
         [Fact]
@@ -1222,16 +1222,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNextXFiscalPeriods(Account.Fields.CreatedOn, 10));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NextXFiscalPeriods);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.NextXFiscalPeriods, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNextXFiscalPeriods(Account.Fields.CreatedOn, 10, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NextXFiscalPeriods);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.NextXFiscalPeriods, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
         }
 
         [Fact]
@@ -1241,16 +1241,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNextXFiscalYears(Account.Fields.CreatedOn, 10));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NextXFiscalYears);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.NextXFiscalYears, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNextXFiscalYears(Account.Fields.CreatedOn, 10, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NextXFiscalYears);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.NextXFiscalYears, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
         }
 
         [Fact]
@@ -1260,16 +1260,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNextXHours(Account.Fields.CreatedOn, 10));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NextXHours);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.NextXHours, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNextXHours(Account.Fields.CreatedOn, 10, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NextXHours);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.NextXHours, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
         }
 
         [Fact]
@@ -1279,16 +1279,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNextXMonths(Account.Fields.CreatedOn, 10));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NextXMonths);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.NextXMonths, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNextXMonths(Account.Fields.CreatedOn, 10, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NextXMonths);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.NextXMonths, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
         }
 
         [Fact]
@@ -1298,16 +1298,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNextXWeeks(Account.Fields.CreatedOn, 10));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NextXWeeks);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.NextXWeeks, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNextXWeeks(Account.Fields.CreatedOn, 10, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NextXWeeks);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.NextXWeeks, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
         }
 
         [Fact]
@@ -1317,16 +1317,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNextXYears(Account.Fields.CreatedOn, 10));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NextXYears);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.NextXYears, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNextXYears(Account.Fields.CreatedOn, 10, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NextXYears);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.NextXYears, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
         }
 
         [Fact]
@@ -1336,16 +1336,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNextYear(Account.Fields.CreatedOn));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NextYear);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.NextYear, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNextYear(Account.Fields.CreatedOn, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NextYear);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.NextYear, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -1355,18 +1355,18 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNotBetween(Account.Fields.NumberOfEmployees, 10, 50));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.NumberOfEmployees);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NotBetween);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[0], 10);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[1], 50);
+            Assert.Equal(ConditionOperator.NotBetween, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[0]);
+            Assert.Equal(50, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[1]);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNotBetween(Account.Fields.NumberOfEmployees, 10, 50, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.NumberOfEmployees);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NotBetween);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[0], 10);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[1], 50);
+            Assert.Equal(ConditionOperator.NotBetween, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[0]);
+            Assert.Equal(50, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values[1]);
         }
 
         [Fact]
@@ -1376,16 +1376,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNotEqual(Account.Fields.Name, "test"));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.Name);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NotEqual);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), "test");
+            Assert.Equal(ConditionOperator.NotEqual, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal("test", query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNotEqual(Account.Fields.Name, "test", Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.Name);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NotEqual);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), "test");
+            Assert.Equal(ConditionOperator.NotEqual, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal("test", query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
         }
 
         [Fact]
@@ -1395,16 +1395,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNotEqualBusinessId(Account.Fields.OwningBusinessUnit));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.OwningBusinessUnit);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NotEqualBusinessId);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.NotEqualBusinessId, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNotEqualBusinessId(Account.Fields.OwningBusinessUnit, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.OwningBusinessUnit);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NotEqualBusinessId);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.NotEqualBusinessId, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -1414,16 +1414,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNotEqualUserId(Account.Fields.OwnerId));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.OwnerId);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NotEqualUserId);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.NotEqualUserId, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNotEqualUserId(Account.Fields.OwnerId, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.OwnerId);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NotEqualUserId);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.NotEqualUserId, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -1433,20 +1433,20 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNotIn(Account.Fields.CustomerTypeCode, 1, 2, 3));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CustomerTypeCode);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NotIn);
-            Assert.True(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Contains(1));
-            Assert.True(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Contains(2));
-            Assert.True(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Contains(3));
+            Assert.Equal(ConditionOperator.NotIn, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Contains(1, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
+            Assert.Contains(2, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
+            Assert.Contains(3, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNotIn(Account.EntityLogicalName, Account.Fields.CustomerTypeCode, 1, 2, 3));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CustomerTypeCode);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NotIn);
-            Assert.True(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Contains(1));
-            Assert.True(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Contains(2));
-            Assert.True(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Contains(3));
+            Assert.Equal(ConditionOperator.NotIn, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Contains(1, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
+            Assert.Contains(2, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
+            Assert.Contains(3, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -1457,8 +1457,8 @@ namespace MscrmTools.FluentQueryExpressions.Test
                     .WhereNotIn(Account.Fields.CustomerTypeCode, new List<int> { 1, 2, 3 }));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CustomerTypeCode);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NotIn);
-            Assert.True(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values is IList);
+            Assert.Equal(ConditionOperator.NotIn, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.IsAssignableFrom<IList>(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId)
@@ -1466,8 +1466,8 @@ namespace MscrmTools.FluentQueryExpressions.Test
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CustomerTypeCode);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NotIn);
-            Assert.True(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values is IList);
+            Assert.Equal(ConditionOperator.NotIn, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.IsAssignableFrom<IList>(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -1477,16 +1477,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNotLike(Account.Fields.Name, "%test%"));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.Name);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NotLike);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), "%test%");
+            Assert.Equal(ConditionOperator.NotLike, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal("%test%", query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNotLike(Account.Fields.Name, "%test%", Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.Name);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NotLike);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), "%test%");
+            Assert.Equal(ConditionOperator.NotLike, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal("%test%", query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
         }
 
         [Fact]
@@ -1497,7 +1497,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNotMask(Account.Fields.Name, obj));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.Name);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NotMask);
+            Assert.Equal(ConditionOperator.NotMask, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), obj);
 
             var query2 = new Query<Account>()
@@ -1505,7 +1505,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.Name);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NotMask);
+            Assert.Equal(ConditionOperator.NotMask, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), obj);
         }
 
@@ -1516,16 +1516,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNotNull(Account.Fields.Name));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.Name);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NotNull);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.NotNull, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNotNull(Account.Fields.Name, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.Name);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NotNull);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.NotNull, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -1536,7 +1536,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNotOn(Account.Fields.CreatedOn, date));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NotOn);
+            Assert.Equal(ConditionOperator.NotOn, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), date);
 
             var query2 = new Query<Account>()
@@ -1544,7 +1544,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NotOn);
+            Assert.Equal(ConditionOperator.NotOn, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), date);
         }
 
@@ -1556,7 +1556,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNotUnder(Account.Fields.AccountId, guid));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.AccountId);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NotUnder);
+            Assert.Equal(ConditionOperator.NotUnder, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), guid);
 
             var query2 = new Query<Account>()
@@ -1564,7 +1564,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.AccountId);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.NotUnder);
+            Assert.Equal(ConditionOperator.NotUnder, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), guid);
         }
 
@@ -1575,16 +1575,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNull(Account.Fields.Name));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.Name);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.Null);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.Null, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereNull(Account.Fields.Name, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.Name);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.Null);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.Null, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -1594,16 +1594,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereOlderThanXDays(Account.Fields.CreatedOn, 10));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.OlderThanXDays);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.OlderThanXDays, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereOlderThanXDays(Account.Fields.CreatedOn, 10, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.OlderThanXDays);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.OlderThanXDays, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
         }
 
         [Fact]
@@ -1613,16 +1613,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereOlderThanXHours(Account.Fields.CreatedOn, 10));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.OlderThanXHours);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.OlderThanXHours, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereOlderThanXHours(Account.Fields.CreatedOn, 10, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.OlderThanXHours);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.OlderThanXHours, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
         }
 
         [Fact]
@@ -1632,16 +1632,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereOlderThanXMinutes(Account.Fields.CreatedOn, 10));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.OlderThanXMinutes);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.OlderThanXMinutes, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereOlderThanXMinutes(Account.Fields.CreatedOn, 10, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.OlderThanXMinutes);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.OlderThanXMinutes, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
         }
 
         [Fact]
@@ -1651,16 +1651,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereOlderThanXMonths(Account.Fields.CreatedOn, 10));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.OlderThanXMonths);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.OlderThanXMonths, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereOlderThanXMonths(Account.Fields.CreatedOn, 10, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.OlderThanXMonths);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.OlderThanXMonths, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
         }
 
         [Fact]
@@ -1670,16 +1670,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereOlderThanXWeeks(Account.Fields.CreatedOn, 10));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.OlderThanXWeeks);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.OlderThanXWeeks, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereOlderThanXWeeks(Account.Fields.CreatedOn, 10, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.OlderThanXWeeks);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.OlderThanXWeeks, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
         }
 
         [Fact]
@@ -1689,16 +1689,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereOlderThanXYears(Account.Fields.CreatedOn, 10));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.OlderThanXYears);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.OlderThanXYears, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereOlderThanXYears(Account.Fields.CreatedOn, 10, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.OlderThanXYears);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), 10);
+            Assert.Equal(ConditionOperator.OlderThanXYears, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Equal(10, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First());
         }
 
         [Fact]
@@ -1709,7 +1709,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereOn(Account.Fields.CreatedOn, date));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.On);
+            Assert.Equal(ConditionOperator.On, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), date);
 
             var query2 = new Query<Account>()
@@ -1717,7 +1717,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.On);
+            Assert.Equal(ConditionOperator.On, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), date);
         }
 
@@ -1729,7 +1729,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereOnOrAfter(Account.Fields.CreatedOn, date));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.OnOrAfter);
+            Assert.Equal(ConditionOperator.OnOrAfter, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), date);
 
             var query2 = new Query<Account>()
@@ -1737,7 +1737,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.OnOrAfter);
+            Assert.Equal(ConditionOperator.OnOrAfter, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), date);
         }
 
@@ -1749,7 +1749,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereOnOrBefore(Account.Fields.CreatedOn, date));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.OnOrBefore);
+            Assert.Equal(ConditionOperator.OnOrBefore, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), date);
 
             var query2 = new Query<Account>()
@@ -1757,7 +1757,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.OnOrBefore);
+            Assert.Equal(ConditionOperator.OnOrBefore, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), date);
         }
 
@@ -1768,16 +1768,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereThisFiscalPeriod(Account.Fields.CreatedOn));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.ThisFiscalPeriod);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.ThisFiscalPeriod, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereThisFiscalPeriod(Account.Fields.CreatedOn, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.ThisFiscalPeriod);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.ThisFiscalPeriod, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -1787,16 +1787,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereThisFiscalYear(Account.Fields.CreatedOn));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.ThisFiscalYear);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.ThisFiscalYear, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereThisFiscalYear(Account.Fields.CreatedOn, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.ThisFiscalYear);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.ThisFiscalYear, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -1806,16 +1806,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereThisMonth(Account.Fields.CreatedOn));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.ThisMonth);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.ThisMonth, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereThisMonth(Account.Fields.CreatedOn, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.ThisMonth);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.ThisMonth, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -1825,16 +1825,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereThisWeek(Account.Fields.CreatedOn));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.ThisWeek);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.ThisWeek, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereThisWeek(Account.Fields.CreatedOn, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.ThisWeek);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.ThisWeek, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -1844,16 +1844,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereThisYear(Account.Fields.CreatedOn));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.ThisYear);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.ThisYear, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereThisYear(Account.Fields.CreatedOn, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.ThisYear);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.ThisYear, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -1863,16 +1863,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereToday(Account.Fields.CreatedOn));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.Today);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.Today, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereToday(Account.Fields.CreatedOn, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.Today);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.Today, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
@@ -1882,27 +1882,27 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereTomorrow(Account.Fields.CreatedOn));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.Tomorrow);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.Tomorrow, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereTomorrow(Account.Fields.CreatedOn, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.Tomorrow);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.Tomorrow, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         [Fact]
         public void ShouldSetWhereUnder()
         {
-            Guid guid = new Guid();
+            var guid = new Guid();
             var query = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereUnder(Account.Fields.AccountId, guid));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.AccountId);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.Under);
+            Assert.Equal(ConditionOperator.Under, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), guid);
 
             var query2 = new Query<Account>()
@@ -1910,19 +1910,19 @@ namespace MscrmTools.FluentQueryExpressions.Test
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.AccountId);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.Under);
+            Assert.Equal(ConditionOperator.Under, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), guid);
         }
 
         [Fact]
         public void ShouldSetWhereUnderOrEqual()
         {
-            Guid guid = new Guid();
+            var guid = new Guid();
             var query = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereUnderOrEqual(Account.Fields.AccountId, guid));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.AccountId);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.UnderOrEqual);
+            Assert.Equal(ConditionOperator.UnderOrEqual, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), guid);
 
             var query2 = new Query<Account>()
@@ -1930,7 +1930,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.AccountId);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.UnderOrEqual);
+            Assert.Equal(ConditionOperator.UnderOrEqual, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.First(), guid);
         }
 
@@ -1941,16 +1941,16 @@ namespace MscrmTools.FluentQueryExpressions.Test
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereYesterday(Account.Fields.CreatedOn));
 
             Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.Yesterday);
-            Assert.Equal(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.Yesterday, query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
 
             var query2 = new Query<Account>()
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId).WhereYesterday(Account.Fields.CreatedOn, Account.EntityLogicalName));
 
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().EntityName, Account.EntityLogicalName);
             Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator, ConditionOperator.Yesterday);
-            Assert.Equal(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values.Count, 0);
+            Assert.Equal(ConditionOperator.Yesterday, query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Operator);
+            Assert.Empty(query2.QueryExpression.LinkEntities.First().LinkCriteria.Conditions.First().Values);
         }
 
         #endregion Conditions
