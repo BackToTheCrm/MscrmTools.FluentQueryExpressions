@@ -24,4 +24,6 @@
         <PackageReference Include="Microsoft.CrmSdk.CoreAssemblies" Version="9.0.2.5" />
     </ItemGroup>
 
+    <Import Project="..\MscrmTools.Shared\MscrmTools.Shared.projitems" Label="Shared" />
+
 </Project>
