@@ -11,23 +11,23 @@ namespace MscrmTools.FluentQueryExpressions
 {
     public class Query : Query<Entity>
     {
-        public Query(string entityLogicalName) : base(entityLogicalName)
+        public Query(string entityLogicalName, IOrganizationService organizationService) : base(entityLogicalName, organizationService)
         {
         }
     }
 
     public class Query<TEntity> where TEntity : Entity
     {
-        public IOrganizationService OrganizationService { get; }
+        protected IOrganizationService OrganizationService { get; }
 
-        public Query(IOrganizationService organizationService = null)
+        public Query(IOrganizationService organizationService)
         {
             OrganizationService = organizationService;
             var entityLogicalName = typeof(TEntity).GetField("EntityLogicalName").GetRawConstantValue().ToString();
             QueryExpression = new QueryExpression(entityLogicalName);
         }
 
-        protected Query(string entityLogicalName, IOrganizationService organizationService = null)
+        protected Query(string entityLogicalName, IOrganizationService organizationService)
         {
             OrganizationService = organizationService;
             QueryExpression = new QueryExpression(entityLogicalName);
@@ -1464,19 +1464,10 @@ namespace MscrmTools.FluentQueryExpressions
 
         public List<TEntity> GetAll()
         {
-            if (OrganizationService == null)
-            {
-                throw new InvalidOperationException($"{nameof(OrganizationService)} must be initialized prior to using this method.");
-            }
-
-            return GetAll(OrganizationService);
-        }
-
-        public List<TEntity> GetAll(IOrganizationService service)
-        {
             if (QueryExpression.TopCount.HasValue)
             {
-                return service.RetrieveMultiple(QueryExpression)
+                return OrganizationService
+                       .RetrieveMultiple(QueryExpression)
                     .Entities
                     .Select(e => e.ToEntity<TEntity>())
                     .ToList();
@@ -1486,7 +1477,7 @@ namespace MscrmTools.FluentQueryExpressions
             var list = new List<TEntity>();
             do
             {
-                ec = service.RetrieveMultiple(QueryExpression);
+                ec = OrganizationService.RetrieveMultiple(QueryExpression);
 
                 list.AddRange(ec.Entities.Select(e => e.ToEntity<TEntity>()));
 
@@ -1498,106 +1489,42 @@ namespace MscrmTools.FluentQueryExpressions
 
         public TEntity GetFirst()
         {
-            if (OrganizationService == null)
+            if (!QueryExpression.TopCount.HasValue)
             {
-                throw new InvalidOperationException($"{nameof(OrganizationService)} must be initialized prior to using this method.");
+                QueryExpression.TopCount = 1;
             }
-            return GetFirst(OrganizationService);
-        }
 
-        public TEntity GetFirst(IOrganizationService service)
-        {
-            return service.RetrieveMultiple(QueryExpression).Entities.First().ToEntity<TEntity>();
+            return OrganizationService.RetrieveMultiple(QueryExpression).Entities.First().ToEntity<TEntity>();
         }
 
         public TEntity GetFirstOrDefault()
         {
-            if (OrganizationService == null)
-            {
-                throw new InvalidOperationException($"{nameof(OrganizationService)} must be initialized prior to using this method.");
-            }
-
-            return GetFirstOrDefault(OrganizationService);
-        }
-
-        public TEntity GetFirstOrDefault(IOrganizationService service)
-        {
-            return service.RetrieveMultiple(QueryExpression).Entities.FirstOrDefault()?.ToEntity<TEntity>();
+            return OrganizationService.RetrieveMultiple(QueryExpression).Entities.FirstOrDefault()?.ToEntity<TEntity>();
         }
 
         public TEntity GetLast()
         {
-            if (OrganizationService == null)
-            {
-                throw new InvalidOperationException($"{nameof(OrganizationService)} must be initialized prior to using this method.");
-            }
-
-            return GetLast(OrganizationService);
-        }
-
-        public TEntity GetLast(IOrganizationService service)
-        {
-            return service.RetrieveMultiple(QueryExpression).Entities.Last().ToEntity<TEntity>();
+            return OrganizationService.RetrieveMultiple(QueryExpression).Entities.Last().ToEntity<TEntity>();
         }
 
         public TEntity GetLastOrDefault()
         {
-            if (OrganizationService == null)
-            {
-                throw new InvalidOperationException($"{nameof(OrganizationService)} must be initialized prior to using this method.");
-            }
-
-            return GetLastOrDefault(OrganizationService);
-        }
-
-        public TEntity GetLastOrDefault(IOrganizationService service)
-        {
-            return service.RetrieveMultiple(QueryExpression).Entities.LastOrDefault()?.ToEntity<TEntity>();
+            return OrganizationService.RetrieveMultiple(QueryExpression).Entities.LastOrDefault()?.ToEntity<TEntity>();
         }
 
         public EntityCollection GetResults()
         {
-            if (OrganizationService == null)
-            {
-                throw new InvalidOperationException($"{nameof(OrganizationService)} must be initialized prior to using this method.");
-            }
-
-            return GetResults(OrganizationService);
-        }
-
-        public EntityCollection GetResults(IOrganizationService service)
-        {
-            return service.RetrieveMultiple(QueryExpression);
+            return OrganizationService.RetrieveMultiple(QueryExpression);
         }
 
         public TEntity GetSingle()
         {
-            if (OrganizationService == null)
-            {
-                throw new InvalidOperationException($"{nameof(OrganizationService)} must be initialized prior to using this method.");
-            }
-
-            return GetSingle(OrganizationService);
-        }
-
-        public TEntity GetSingle(IOrganizationService service)
-        {
-            return service.RetrieveMultiple(QueryExpression).Entities.Single().ToEntity<TEntity>();
+            return OrganizationService.RetrieveMultiple(QueryExpression).Entities.Single().ToEntity<TEntity>();
         }
 
         public TEntity GetSingleOrDefault()
         {
-            if (OrganizationService == null)
-            {
-                throw new InvalidOperationException($"{nameof(OrganizationService)} must be initialized prior to using this method.");
-            }
-
-            return GetSingleOrDefault(OrganizationService);
-        }
-
-        public TEntity GetSingleOrDefault(IOrganizationService service)
-        {
-            return service.RetrieveMultiple(QueryExpression).Entities.SingleOrDefault()?.ToEntity<TEntity>();
+            return OrganizationService.RetrieveMultiple(QueryExpression).Entities.SingleOrDefault()?.ToEntity<TEntity>();
         }
 
         public TEntity GetById(Guid id, bool isActivityEntity = false)
@@ -1607,11 +1534,6 @@ namespace MscrmTools.FluentQueryExpressions
                 throw new InvalidOperationException($"{nameof(OrganizationService)} must be initialized prior to using this method.");
             }
 
-            return GetById(id, OrganizationService, isActivityEntity);
-        }
-
-        public TEntity GetById(Guid id, IOrganizationService service, bool isActivityEntity = false)
-        {
             QueryExpression.Criteria = new FilterExpression
             {
                 Conditions =
@@ -1620,7 +1542,7 @@ namespace MscrmTools.FluentQueryExpressions
                 }
             };
 
-            return GetFirstOrDefault(service);
+            return GetFirstOrDefault();
         }
 
         #endregion Service calls

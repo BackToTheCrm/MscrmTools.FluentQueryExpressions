@@ -16,7 +16,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldAddAllAttributes()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .Select(true);
 
             Assert.True(query.QueryExpression.ColumnSet.AllColumns);
@@ -25,7 +25,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldAddAttributesWithAnonymousType()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .Select(a => new { a.Name, a.AccountNumber });
 
             Assert.Contains(Account.Fields.Name, query.QueryExpression.ColumnSet.Columns);
@@ -35,7 +35,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldAddFilter()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .AddFilters(LogicalOperator.Or, new Filter(LogicalOperator.Or));
 
             Assert.Equal(LogicalOperator.Or, query.QueryExpression.Criteria.FilterOperator);
@@ -46,7 +46,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldAddFilterWithoutOperator()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .AddFilters(new Filter(LogicalOperator.Or));
 
             Assert.Equal(LogicalOperator.And, query.QueryExpression.Criteria.FilterOperator);
@@ -57,12 +57,10 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldAddLink()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId));
 
             Assert.Single(query.QueryExpression.LinkEntities);
-
-
 
             Assert.Equal(Contact.EntityLogicalName, query.QueryExpression.LinkEntities.First().LinkToEntityName);
             Assert.Equal(Contact.Fields.ParentCustomerId, query.QueryExpression.LinkEntities.First().LinkToAttributeName);
@@ -74,7 +72,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldAddLinks()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                         .AddLink(new Link<Contact>(Contact.Fields.ParentCustomerId, Account.Fields.AccountId))
                         .AddLink(new Link<Task>(Task.Fields.RegardingObjectId, Account.Fields.AccountId));
 
@@ -94,7 +92,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldAddNoAttribute()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .Select();
 
             Assert.False(query.QueryExpression.ColumnSet.AllColumns);
@@ -103,7 +101,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldAddOneAttribute()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .Select(Account.Fields.Name);
 
             Assert.Contains(Account.Fields.Name, query.QueryExpression.ColumnSet.Columns);
@@ -112,7 +110,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldAddOrder()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .Order(Account.Fields.Name, OrderType.Ascending);
 
             Assert.Equal(query.QueryExpression.Orders.First().AttributeName, Account.Fields.Name);
@@ -122,7 +120,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldAddPaging()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .SetPagingInfo(1, 100, true);
 
             Assert.Equal(1, query.QueryExpression.PageInfo.PageNumber);
@@ -133,7 +131,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldAddTwoAttributes()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                         .Select(Account.Fields.Name)
                         .Select(Account.Fields.AccountNumber);
 
@@ -144,7 +142,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldAddTwoFilters()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .AddFilters(
                     LogicalOperator.Or,
                     new Filter(LogicalOperator.Or),
@@ -160,7 +158,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldBeAccountQueryExpression()
         {
-            var query = new Query<Account>();
+            var query = new Query<Account>(null);
 
             Assert.Equal(query.QueryExpression.EntityName, Account.EntityLogicalName);
         }
@@ -168,7 +166,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldBeDistinct()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .Distinct();
 
             Assert.True(query.QueryExpression.Distinct);
@@ -177,7 +175,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldCreateLateBound()
         {
-            var query = new Query(Account.EntityLogicalName);
+            var query = new Query(Account.EntityLogicalName, null);
 
             Assert.Equal(query.QueryExpression.EntityName, Account.EntityLogicalName);
         }
@@ -185,7 +183,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldHaveNoLock()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .NoLock();
 
             Assert.True(query.QueryExpression.NoLock);
@@ -194,7 +192,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetLogicalOperatorOr()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .SetDefaultFilterOperator(LogicalOperator.Or);
 
             Assert.Equal(LogicalOperator.Or, query.QueryExpression.Criteria.FilterOperator);
@@ -203,7 +201,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetNextPage()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                         .SetPagingInfo(1, 100, true)
                         .NextPage("<fakePagingCookie>");
 
@@ -216,7 +214,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetTop()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .Top(100);
 
             Assert.Equal(100, query.QueryExpression.TopCount);
@@ -228,14 +226,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         public void ShouldSetWhere()
         {
             var guid = Guid.NewGuid();
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .Where(Account.Fields.AccountId, ConditionOperator.Above, guid);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.AccountId);
             Assert.Equal(ConditionOperator.Above, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().Values.Single(), guid);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .Where(
                     Account.EntityLogicalName,
                     Account.Fields.AccountId,
@@ -253,14 +251,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         public void ShouldSetWhereAbove()
         {
             var guid = Guid.NewGuid();
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereAbove(Account.Fields.AccountId, guid);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.AccountId);
             Assert.Equal(ConditionOperator.Above, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().Values.Single(), guid);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereAbove(Account.Fields.AccountId, guid, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -273,14 +271,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         public void ShouldSetWhereAboveOrEqual()
         {
             var guid = Guid.NewGuid();
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereAboveOrEqual(Account.Fields.AccountId, guid);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.AccountId);
             Assert.Equal(ConditionOperator.AboveOrEqual, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().Values.Single(), guid);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereAboveOrEqual(Account.Fields.AccountId, guid, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -292,14 +290,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereBeginsWith()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereBeginsWith(Account.Fields.Name, "test");
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.Name);
             Assert.Equal(ConditionOperator.BeginsWith, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal("test", query.QueryExpression.Criteria.Conditions.First().Values.Single());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereBeginsWith(Account.Fields.Name, "test", Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -311,7 +309,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereBetween()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereBetween(Account.Fields.NumberOfEmployees, 10, 50);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.NumberOfEmployees);
@@ -319,7 +317,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
             Assert.Equal(10, query.QueryExpression.Criteria.Conditions.First().Values[0]);
             Assert.Equal(50, query.QueryExpression.Criteria.Conditions.First().Values[1]);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereBetween(
                     Account.Fields.NumberOfEmployees,
                     10,
@@ -338,14 +336,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         public void ShouldSetWhereChildOf()
         {
             var guid = Guid.NewGuid();
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereChildOf(Account.Fields.AccountId, guid);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.AccountId);
             Assert.Equal(ConditionOperator.ChildOf, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().Values.Single(), guid);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereChildOf(Account.Fields.AccountId, guid, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -357,14 +355,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereContains()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereContains(Account.Fields.Name, "test");
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.Name);
             Assert.Equal(ConditionOperator.Contains, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal("test", query.QueryExpression.Criteria.Conditions.First().Values.Single());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereContains(Account.Fields.Name, "test", Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -376,7 +374,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereContainValues()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereContainValues(
                     Account.Fields.CustomerTypeCode,
                     1,
@@ -390,7 +388,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
             Assert.Contains(2, query.QueryExpression.Criteria.Conditions.First().Values);
             Assert.Contains(3, query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereContainValues(
                     Account.EntityLogicalName,
                     Account.Fields.CustomerTypeCode,
@@ -410,14 +408,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereDoesNotBeginWith()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereDoesNotBeginWith(Account.Fields.Name, "test");
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.Name);
             Assert.Equal(ConditionOperator.DoesNotBeginWith, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal("test", query.QueryExpression.Criteria.Conditions.First().Values.Single());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereDoesNotBeginWith(Account.Fields.Name, "test", Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -429,14 +427,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereDoesNotContain()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereDoesNotContain(Account.Fields.Name, "test");
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.Name);
             Assert.Equal(ConditionOperator.DoesNotContain, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal("test", query.QueryExpression.Criteria.Conditions.First().Values.Single());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereDoesNotContain(Account.Fields.Name, "test", Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -448,7 +446,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereDoesNotContainValues()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereDoesNotContainValues(
                     Account.Fields.CustomerTypeCode,
                     1,
@@ -462,7 +460,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
             Assert.Contains(2, query.QueryExpression.Criteria.Conditions.First().Values);
             Assert.Contains(3, query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereDoesNotContainValues(
                     Account.EntityLogicalName,
                     Account.Fields.CustomerTypeCode,
@@ -482,14 +480,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereDoesNotEndWith()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereDoesNotEndWith(Account.Fields.Name, "test");
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.Name);
             Assert.Equal(ConditionOperator.DoesNotEndWith, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal("test", query.QueryExpression.Criteria.Conditions.First().Values.Single());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereDoesNotEndWith(Account.Fields.Name, "test", Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -501,14 +499,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereEndsWith()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereEndsWith(Account.Fields.Name, "test");
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.Name);
             Assert.Equal(ConditionOperator.EndsWith, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal("test", query.QueryExpression.Criteria.Conditions.First().Values.Single());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereEndsWith(Account.Fields.Name, "test", Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -520,14 +518,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereEqual()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereEqual(Account.Fields.Name, "test");
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.Name);
             Assert.Equal(ConditionOperator.Equal, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal("test", query.QueryExpression.Criteria.Conditions.First().Values.Single());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereEqual(Account.Fields.Name, "test", Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -539,14 +537,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereEqualBusinessId()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereEqualBusinessId(Account.Fields.OwningBusinessUnit);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.OwningBusinessUnit);
             Assert.Equal(ConditionOperator.EqualBusinessId, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Empty(query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereEqualBusinessId(Account.Fields.OwningBusinessUnit, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -558,14 +556,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereEqualUserId()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereEqualUserId(Account.Fields.OwnerId);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.OwnerId);
             Assert.Equal(ConditionOperator.EqualUserId, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Empty(query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereEqualUserId(Account.Fields.OwnerId, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -577,14 +575,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereEqualUserLanguage()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereEqualUserLanguage("no_language_attribute");
 
             Assert.Equal("no_language_attribute", query.QueryExpression.Criteria.Conditions.First().AttributeName);
             Assert.Equal(ConditionOperator.EqualUserLanguage, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Empty(query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereEqualUserLanguage("no_language_attribute", Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -596,14 +594,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereEqualUserOrUserHierarchy()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereEqualUserOrUserHierarchy(Account.Fields.OwnerId);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.OwnerId);
             Assert.Equal(ConditionOperator.EqualUserOrUserHierarchy, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Empty(query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereEqualUserOrUserHierarchy(Account.Fields.OwnerId, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -615,14 +613,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereEqualUserOrUserHierarchyAndTeams()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereEqualUserOrUserHierarchyAndTeams(Account.Fields.OwnerId);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.OwnerId);
             Assert.Equal(ConditionOperator.EqualUserOrUserHierarchyAndTeams, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Empty(query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereEqualUserOrUserHierarchyAndTeams(Account.Fields.OwnerId, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -634,14 +632,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereEqualUserOrUserTeams()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereEqualUserOrUserTeams(Account.Fields.OwnerId);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.OwnerId);
             Assert.Equal(ConditionOperator.EqualUserOrUserTeams, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Empty(query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereEqualUserOrUserTeams(Account.Fields.OwnerId, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -653,14 +651,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereEqualUserTeams()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereEqualUserTeams(Account.Fields.OwnerId);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.OwnerId);
             Assert.Equal(ConditionOperator.EqualUserTeams, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Empty(query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereEqualUserTeams(Account.Fields.OwnerId, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -672,14 +670,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereGreaterEqual()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereGreaterEqual(Account.Fields.NumberOfEmployees, 10);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.NumberOfEmployees);
             Assert.Equal(ConditionOperator.GreaterEqual, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(10, query.QueryExpression.Criteria.Conditions.First().Values.First());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereGreaterEqual(Account.Fields.NumberOfEmployees, 10, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -691,14 +689,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereGreaterThan()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereGreaterThan(Account.Fields.NumberOfEmployees, 10);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.NumberOfEmployees);
             Assert.Equal(ConditionOperator.GreaterThan, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(10, query.QueryExpression.Criteria.Conditions.First().Values.First());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereGreaterThan(Account.Fields.NumberOfEmployees, 10, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -710,7 +708,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereIn()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereIn(
                     Account.Fields.CustomerTypeCode,
                     1,
@@ -724,7 +722,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
             Assert.Contains(2, query.QueryExpression.Criteria.Conditions.First().Values);
             Assert.Contains(3, query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereIn(
                     Account.EntityLogicalName,
                     Account.Fields.CustomerTypeCode,
@@ -744,14 +742,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereInFiscalPeriod()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereInFiscalPeriod(Account.Fields.CreatedOn, 1);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.InFiscalPeriod, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(1, query.QueryExpression.Criteria.Conditions.First().Values.First());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereInFiscalPeriod(Account.Fields.CreatedOn, 1, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -763,7 +761,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereInFiscalPeriodAndYear()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereInFiscalPeriodAndYear(Account.Fields.CreatedOn, 1, 2018);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
@@ -771,7 +769,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
             Assert.Equal(1, query.QueryExpression.Criteria.Conditions.First().Values[0]);
             Assert.Equal(2018, query.QueryExpression.Criteria.Conditions.First().Values[1]);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereInFiscalPeriodAndYear(
                     Account.Fields.CreatedOn,
                     1,
@@ -789,14 +787,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereInFiscalYear()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereInFiscalYear(Account.Fields.CreatedOn, 2018);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.InFiscalYear, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(2018, query.QueryExpression.Criteria.Conditions.First().Values.First());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereInFiscalYear(Account.Fields.CreatedOn, 2018, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -808,7 +806,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereInList()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereIn(
                     Account.Fields.CustomerTypeCode,
                     new List<int>
@@ -823,7 +821,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
             Assert.Equal(ConditionOperator.In, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.IsAssignableFrom<IList>(query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereIn(
                     Account.EntityLogicalName,
                     Account.Fields.CustomerTypeCode,
@@ -844,7 +842,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereInOrAfterFiscalPeriodAndYear()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereInOrAfterFiscalPeriodAndYear(Account.Fields.CreatedOn, 1, 2018);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
@@ -852,7 +850,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
             Assert.Equal(1, query.QueryExpression.Criteria.Conditions.First().Values[0]);
             Assert.Equal(2018, query.QueryExpression.Criteria.Conditions.First().Values[1]);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereInOrAfterFiscalPeriodAndYear(
                     Account.Fields.CreatedOn,
                     1,
@@ -870,7 +868,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereInOrBeforeFiscalPeriodAndYear()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereInOrBeforeFiscalPeriodAndYear(Account.Fields.CreatedOn, 1, 2018);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
@@ -878,7 +876,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
             Assert.Equal(1, query.QueryExpression.Criteria.Conditions.First().Values[0]);
             Assert.Equal(2018, query.QueryExpression.Criteria.Conditions.First().Values[1]);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereInOrBeforeFiscalPeriodAndYear(
                     Account.Fields.CreatedOn,
                     1,
@@ -896,14 +894,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereLast7Days()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereLast7Days(Account.Fields.CreatedOn);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.Last7Days, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Empty(query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereLast7Days(Account.Fields.CreatedOn, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -915,14 +913,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereLastFiscalPeriod()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereLastFiscalPeriod(Account.Fields.CreatedOn);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.LastFiscalPeriod, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Empty(query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereLastFiscalPeriod(Account.Fields.CreatedOn, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -934,14 +932,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereLastFiscalYear()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereLastFiscalYear(Account.Fields.CreatedOn);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.LastFiscalYear, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Empty(query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereLastFiscalYear(Account.Fields.CreatedOn, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -953,14 +951,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereLastMonth()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereLastMonth(Account.Fields.CreatedOn);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.LastMonth, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Empty(query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereLastMonth(Account.Fields.CreatedOn, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -972,14 +970,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereLastWeek()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereLastWeek(Account.Fields.CreatedOn);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.LastWeek, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Empty(query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereLastWeek(Account.Fields.CreatedOn, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -991,14 +989,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereLastXDays()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereLastXDays(Account.Fields.CreatedOn, 10);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.LastXDays, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(10, query.QueryExpression.Criteria.Conditions.First().Values.First());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereLastXDays(Account.Fields.CreatedOn, 10, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1010,14 +1008,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereLastXFiscalPeriods()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereLastXFiscalPeriods(Account.Fields.CreatedOn, 10);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.LastXFiscalPeriods, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(10, query.QueryExpression.Criteria.Conditions.First().Values.First());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereLastXFiscalPeriods(Account.Fields.CreatedOn, 10, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1029,14 +1027,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereLastXFiscalYears()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereLastXFiscalYears(Account.Fields.CreatedOn, 10);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.LastXFiscalYears, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(10, query.QueryExpression.Criteria.Conditions.First().Values.First());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereLastXFiscalYears(Account.Fields.CreatedOn, 10, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1048,14 +1046,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereLastXHours()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereLastXHours(Account.Fields.CreatedOn, 10);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.LastXHours, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(10, query.QueryExpression.Criteria.Conditions.First().Values.First());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereLastXHours(Account.Fields.CreatedOn, 10, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1067,14 +1065,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereLastXMonths()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereLastXMonths(Account.Fields.CreatedOn, 10);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.LastXMonths, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(10, query.QueryExpression.Criteria.Conditions.First().Values.First());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereLastXMonths(Account.Fields.CreatedOn, 10, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1086,14 +1084,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereLastXWeeks()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereLastXWeeks(Account.Fields.CreatedOn, 10);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.LastXWeeks, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(10, query.QueryExpression.Criteria.Conditions.First().Values.First());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereLastXWeeks(Account.Fields.CreatedOn, 10, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1105,14 +1103,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereLastXYears()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereLastXYears(Account.Fields.CreatedOn, 10);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.LastXYears, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(10, query.QueryExpression.Criteria.Conditions.First().Values.First());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereLastXYears(Account.Fields.CreatedOn, 10, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1124,14 +1122,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereLastYear()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereLastYear(Account.Fields.CreatedOn);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.LastYear, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Empty(query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereLastYear(Account.Fields.CreatedOn, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1143,14 +1141,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereLessEqual()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereLessEqual(Account.Fields.NumberOfEmployees, 10);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.NumberOfEmployees);
             Assert.Equal(ConditionOperator.LessEqual, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(10, query.QueryExpression.Criteria.Conditions.First().Values.First());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereLessEqual(Account.Fields.NumberOfEmployees, 10, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1162,14 +1160,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereLessThan()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereLessThan(Account.Fields.NumberOfEmployees, 10);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.NumberOfEmployees);
             Assert.Equal(ConditionOperator.LessThan, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(10, query.QueryExpression.Criteria.Conditions.First().Values.First());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereLessThan(Account.Fields.NumberOfEmployees, 10, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1181,14 +1179,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereLike()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereLike(Account.Fields.Name, "%test%");
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.Name);
             Assert.Equal(ConditionOperator.Like, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal("%test%", query.QueryExpression.Criteria.Conditions.First().Values.First());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereLike(Account.Fields.Name, "%test%", Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1201,14 +1199,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         public void ShouldSetWhereMask()
         {
             var obj = new object();
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereMask(Account.Fields.Name, obj);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.Name);
             Assert.Equal(ConditionOperator.Mask, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().Values.First(), obj);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereMask(Account.Fields.Name, obj, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1221,14 +1219,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         public void ShouldSetWhereMasksSelect()
         {
             var obj = new object();
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereMasksSelect(Account.Fields.Name, obj);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.Name);
             Assert.Equal(ConditionOperator.MasksSelect, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().Values.First(), obj);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereMasksSelect(Account.Fields.Name, obj, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1240,14 +1238,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereNext7Days()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereNext7Days(Account.Fields.CreatedOn);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.Next7Days, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Empty(query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereNext7Days(Account.Fields.CreatedOn, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1259,14 +1257,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereNextFiscalPeriod()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereNextFiscalPeriod(Account.Fields.CreatedOn);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.NextFiscalPeriod, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Empty(query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereNextFiscalPeriod(Account.Fields.CreatedOn, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1278,14 +1276,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereNextFiscalYear()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereNextFiscalYear(Account.Fields.CreatedOn);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.NextFiscalYear, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Empty(query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereNextFiscalYear(Account.Fields.CreatedOn, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1297,14 +1295,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereNextMonth()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereNextMonth(Account.Fields.CreatedOn);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.NextMonth, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Empty(query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereNextMonth(Account.Fields.CreatedOn, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1316,14 +1314,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereNextWeek()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereNextWeek(Account.Fields.CreatedOn);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.NextWeek, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Empty(query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereNextWeek(Account.Fields.CreatedOn, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1335,14 +1333,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereNextXDays()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereNextXDays(Account.Fields.CreatedOn, 10);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.NextXDays, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(10, query.QueryExpression.Criteria.Conditions.First().Values.First());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereNextXDays(Account.Fields.CreatedOn, 10, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1354,14 +1352,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereNextXFiscalPeriods()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereNextXFiscalPeriods(Account.Fields.CreatedOn, 10);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.NextXFiscalPeriods, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(10, query.QueryExpression.Criteria.Conditions.First().Values.First());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereNextXFiscalPeriods(Account.Fields.CreatedOn, 10, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1373,14 +1371,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereNextXFiscalYears()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereNextXFiscalYears(Account.Fields.CreatedOn, 10);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.NextXFiscalYears, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(10, query.QueryExpression.Criteria.Conditions.First().Values.First());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereNextXFiscalYears(Account.Fields.CreatedOn, 10, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1392,14 +1390,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereNextXHours()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereNextXHours(Account.Fields.CreatedOn, 10);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.NextXHours, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(10, query.QueryExpression.Criteria.Conditions.First().Values.First());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereNextXHours(Account.Fields.CreatedOn, 10, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1411,14 +1409,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereNextXMonths()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereNextXMonths(Account.Fields.CreatedOn, 10);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.NextXMonths, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(10, query.QueryExpression.Criteria.Conditions.First().Values.First());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereNextXMonths(Account.Fields.CreatedOn, 10, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1430,14 +1428,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereNextXWeeks()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereNextXWeeks(Account.Fields.CreatedOn, 10);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.NextXWeeks, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(10, query.QueryExpression.Criteria.Conditions.First().Values.First());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereNextXWeeks(Account.Fields.CreatedOn, 10, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1449,14 +1447,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereNextXYears()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereNextXYears(Account.Fields.CreatedOn, 10);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.NextXYears, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(10, query.QueryExpression.Criteria.Conditions.First().Values.First());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereNextXYears(Account.Fields.CreatedOn, 10, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1468,14 +1466,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereNextYear()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereNextYear(Account.Fields.CreatedOn);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.NextYear, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Empty(query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereNextYear(Account.Fields.CreatedOn, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1487,7 +1485,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereNotBetween()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereNotBetween(Account.Fields.NumberOfEmployees, 10, 50);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.NumberOfEmployees);
@@ -1495,7 +1493,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
             Assert.Equal(10, query.QueryExpression.Criteria.Conditions.First().Values[0]);
             Assert.Equal(50, query.QueryExpression.Criteria.Conditions.First().Values[1]);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereNotBetween(
                     Account.Fields.NumberOfEmployees,
                     10,
@@ -1513,14 +1511,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereNotEqual()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereNotEqual(Account.Fields.Name, "test");
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.Name);
             Assert.Equal(ConditionOperator.NotEqual, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal("test", query.QueryExpression.Criteria.Conditions.First().Values.First());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereNotEqual(Account.Fields.Name, "test", Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1532,14 +1530,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereNotEqualBusinessId()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereNotEqualBusinessId(Account.Fields.OwningBusinessUnit);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.OwningBusinessUnit);
             Assert.Equal(ConditionOperator.NotEqualBusinessId, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Empty(query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereNotEqualBusinessId(Account.Fields.OwningBusinessUnit, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1551,14 +1549,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereNotEqualUserId()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereNotEqualUserId(Account.Fields.OwnerId);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.OwnerId);
             Assert.Equal(ConditionOperator.NotEqualUserId, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Empty(query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereNotEqualUserId(Account.Fields.OwnerId, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1570,7 +1568,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereNotIn()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereNotIn(
                     Account.Fields.CustomerTypeCode,
                     1,
@@ -1584,7 +1582,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
             Assert.Contains(2, query.QueryExpression.Criteria.Conditions.First().Values);
             Assert.Contains(3, query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereNotIn(
                     Account.EntityLogicalName,
                     Account.Fields.CustomerTypeCode,
@@ -1604,7 +1602,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereNotInList()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereNotIn(
                     Account.Fields.CustomerTypeCode,
                     new List<int>
@@ -1619,7 +1617,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
             Assert.Equal(ConditionOperator.NotIn, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.IsAssignableFrom<IList>(query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereNotIn(
                     Account.EntityLogicalName,
                     Account.Fields.CustomerTypeCode,
@@ -1640,14 +1638,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereNotLike()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereNotLike(Account.Fields.Name, "%test%");
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.Name);
             Assert.Equal(ConditionOperator.NotLike, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal("%test%", query.QueryExpression.Criteria.Conditions.First().Values.First());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereNotLike(Account.Fields.Name, "%test%", Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1660,14 +1658,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         public void ShouldSetWhereNotMask()
         {
             var obj = new object();
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereNotMask(Account.Fields.Name, obj);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.Name);
             Assert.Equal(ConditionOperator.NotMask, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().Values.First(), obj);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereNotMask(Account.Fields.Name, obj, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1679,14 +1677,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereNotNull()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereNotNull(Account.Fields.Name);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.Name);
             Assert.Equal(ConditionOperator.NotNull, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Empty(query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereNotNull(Account.Fields.Name, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1699,14 +1697,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         public void ShouldSetWhereNotOn()
         {
             var date = new DateTime();
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereNotOn(Account.Fields.CreatedOn, date);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.NotOn, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().Values.First(), date);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereNotOn(Account.Fields.CreatedOn, date, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1719,14 +1717,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         public void ShouldSetWhereNotUnder()
         {
             var guid = new Guid();
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereNotUnder(Account.Fields.AccountId, guid);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.AccountId);
             Assert.Equal(ConditionOperator.NotUnder, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().Values.First(), guid);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereNotUnder(Account.Fields.AccountId, guid, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1738,14 +1736,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereNull()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereNull(Account.Fields.Name);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.Name);
             Assert.Equal(ConditionOperator.Null, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Empty(query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereNull(Account.Fields.Name, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1757,14 +1755,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereOlderThanXDays()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereOlderThanXDays(Account.Fields.CreatedOn, 10);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.OlderThanXDays, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(10, query.QueryExpression.Criteria.Conditions.First().Values.First());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereOlderThanXDays(Account.Fields.CreatedOn, 10, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1776,14 +1774,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereOlderThanXHours()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereOlderThanXHours(Account.Fields.CreatedOn, 10);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.OlderThanXHours, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(10, query.QueryExpression.Criteria.Conditions.First().Values.First());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereOlderThanXHours(Account.Fields.CreatedOn, 10, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1795,14 +1793,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereOlderThanXMinutes()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereOlderThanXMinutes(Account.Fields.CreatedOn, 10);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.OlderThanXMinutes, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(10, query.QueryExpression.Criteria.Conditions.First().Values.First());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereOlderThanXMinutes(Account.Fields.CreatedOn, 10, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1814,14 +1812,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereOlderThanXMonths()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereOlderThanXMonths(Account.Fields.CreatedOn, 10);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.OlderThanXMonths, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(10, query.QueryExpression.Criteria.Conditions.First().Values.First());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereOlderThanXMonths(Account.Fields.CreatedOn, 10, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1833,14 +1831,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereOlderThanXWeeks()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereOlderThanXWeeks(Account.Fields.CreatedOn, 10);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.OlderThanXWeeks, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(10, query.QueryExpression.Criteria.Conditions.First().Values.First());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereOlderThanXWeeks(Account.Fields.CreatedOn, 10, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1852,14 +1850,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereOlderThanXYears()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereOlderThanXYears(Account.Fields.CreatedOn, 10);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.OlderThanXYears, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(10, query.QueryExpression.Criteria.Conditions.First().Values.First());
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereOlderThanXYears(Account.Fields.CreatedOn, 10, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1872,14 +1870,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         public void ShouldSetWhereOn()
         {
             var date = new DateTime();
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereOn(Account.Fields.CreatedOn, date);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.On, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().Values.First(), date);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereOn(Account.Fields.CreatedOn, date, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1892,14 +1890,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         public void ShouldSetWhereOnOrAfter()
         {
             var date = new DateTime();
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereOnOrAfter(Account.Fields.CreatedOn, date);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.OnOrAfter, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().Values.First(), date);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereOnOrAfter(Account.Fields.CreatedOn, date, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1912,14 +1910,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         public void ShouldSetWhereOnOrBefore()
         {
             var date = new DateTime();
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereOnOrBefore(Account.Fields.CreatedOn, date);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.OnOrBefore, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().Values.First(), date);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereOnOrBefore(Account.Fields.CreatedOn, date, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1931,14 +1929,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereThisFiscalPeriod()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereThisFiscalPeriod(Account.Fields.CreatedOn);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.ThisFiscalPeriod, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Empty(query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereThisFiscalPeriod(Account.Fields.CreatedOn, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1950,14 +1948,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereThisFiscalYear()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereThisFiscalYear(Account.Fields.CreatedOn);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.ThisFiscalYear, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Empty(query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereThisFiscalYear(Account.Fields.CreatedOn, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1969,14 +1967,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereThisMonth()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereThisMonth(Account.Fields.CreatedOn);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.ThisMonth, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Empty(query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereThisMonth(Account.Fields.CreatedOn, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -1988,14 +1986,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereThisWeek()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereThisWeek(Account.Fields.CreatedOn);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.ThisWeek, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Empty(query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereThisWeek(Account.Fields.CreatedOn, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -2007,14 +2005,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereThisYear()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereThisYear(Account.Fields.CreatedOn);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.ThisYear, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Empty(query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereThisYear(Account.Fields.CreatedOn, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -2026,14 +2024,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereToday()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereToday(Account.Fields.CreatedOn);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.Today, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Empty(query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereToday(Account.Fields.CreatedOn, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -2045,14 +2043,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereTomorrow()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereTomorrow(Account.Fields.CreatedOn);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.Tomorrow, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Empty(query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereTomorrow(Account.Fields.CreatedOn, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -2065,14 +2063,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         public void ShouldSetWhereUnder()
         {
             var guid = new Guid();
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereUnder(Account.Fields.AccountId, guid);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.AccountId);
             Assert.Equal(ConditionOperator.Under, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().Values.First(), guid);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereUnder(Account.Fields.AccountId, guid, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -2085,14 +2083,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         public void ShouldSetWhereUnderOrEqual()
         {
             var guid = new Guid();
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereUnderOrEqual(Account.Fields.AccountId, guid);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.AccountId);
             Assert.Equal(ConditionOperator.UnderOrEqual, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().Values.First(), guid);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereUnderOrEqual(Account.Fields.AccountId, guid, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -2104,14 +2102,14 @@ namespace MscrmTools.FluentQueryExpressions.Test
         [Fact]
         public void ShouldSetWhereYesterday()
         {
-            var query = new Query<Account>()
+            var query = new Query<Account>(null)
                 .WhereYesterday(Account.Fields.CreatedOn);
 
             Assert.Equal(query.QueryExpression.Criteria.Conditions.First().AttributeName, Account.Fields.CreatedOn);
             Assert.Equal(ConditionOperator.Yesterday, query.QueryExpression.Criteria.Conditions.First().Operator);
             Assert.Empty(query.QueryExpression.Criteria.Conditions.First().Values);
 
-            var query2 = new Query<Account>()
+            var query2 = new Query<Account>(null)
                 .WhereYesterday(Account.Fields.CreatedOn, Account.EntityLogicalName);
 
             Assert.Equal(query2.QueryExpression.Criteria.Conditions.First().EntityName, Account.EntityLogicalName);
@@ -2134,8 +2132,8 @@ namespace MscrmTools.FluentQueryExpressions.Test
             fakedContext.Initialize(new Account { Id = _item1Id });
             var service = fakedContext.GetOrganizationService();
 
-            var records = new Query<Account>()
-                .GetAll(service);
+            var records = new Query<Account>(service)
+                .GetAll();
 
             records.Should().HaveCount(1);
             records.First().Id.Should().Be(_item1Id);
@@ -2148,22 +2146,22 @@ namespace MscrmTools.FluentQueryExpressions.Test
             fakedContext.Initialize(new Account { Id = _item1Id });
             var service = fakedContext.GetOrganizationService();
 
-            var records = new Query<Account>()
+            var records = new Query<Account>(service)
                           .Top(100)
-                          .GetAll(service);
+                          .GetAll();
 
             Assert.Single(records);
             Assert.Equal(records.First().Id, _item1Id);
         }
 
         [Fact]
-        public void ShouldGetAllWithExtension()
+        public void ShouldQueryWithExtension()
         {
             var fakedContext = new XrmFakedContext { ProxyTypesAssembly = typeof(Account).Assembly };
             fakedContext.Initialize(new Account { Id = _item1Id });
             var service = fakedContext.GetOrganizationService();
 
-            var records = service.RetrieveMultiple(new Query<Account>());
+            var records = service.Query<Account>().GetAll();
 
             Assert.Single(records);
             Assert.Equal(records.First().Id, _item1Id);
@@ -2176,8 +2174,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
             fakedContext.Initialize(new Account { Id = _item1Id });
             var service = fakedContext.GetOrganizationService();
 
-            var records = new Query<Account>()
-                .GetAll(service);
+            var records = new Query<Account>(service).GetAll();
 
             Assert.Single(records);
             Assert.Equal(records.First().Id, _item1Id);
@@ -2190,11 +2187,11 @@ namespace MscrmTools.FluentQueryExpressions.Test
             fakedContext.Initialize(new Account { Id = _item1Id });
             var service = fakedContext.GetOrganizationService();
 
-            var query = new Query<Account>();
-            var record = query.GetById(_item1Id, service);
+            var query = new Query<Account>(service);
+            var record = query.GetById(_item1Id);
 
             Assert.NotNull(record);
-            Assert.Equal(Account.EntityLogicalName + "id", query.QueryExpression.Criteria.Conditions.First().AttributeName);
+            Assert.Equal($"{Account.EntityLogicalName}id", query.QueryExpression.Criteria.Conditions.First().AttributeName);
         }
 
         [Fact]
@@ -2205,8 +2202,8 @@ namespace MscrmTools.FluentQueryExpressions.Test
 
             var service = fakedContext.GetOrganizationService();
 
-            var query = new Query<Task>();
-            var record = query.GetById(_item1Id, service, true);
+            var query = new Query<Task>(service);
+            var record = query.GetById(_item1Id, true);
 
             Assert.NotNull(record);
             Assert.Equal("activityid", query.QueryExpression.Criteria.Conditions.First().AttributeName);
@@ -2219,8 +2216,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
             fakedContext.Initialize(new List<Entity> { new Account { Id = _item1Id }, new Account { Id = _item2Id } });
             var service = fakedContext.GetOrganizationService();
 
-            var record = new Query<Account>()
-                .GetFirst(service);
+            var record = new Query<Account>(service).GetFirst();
 
             Assert.NotNull(record);
             Assert.Equal(record.Id, _item1Id);
@@ -2232,7 +2228,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
             var fakedContext = new XrmFakedContext { ProxyTypesAssembly = typeof(Account).Assembly };
             var service = fakedContext.GetOrganizationService();
 
-            var ex = Record.Exception(() => new Query<Account>().GetFirst(service));
+            var ex = Record.Exception(() => new Query<Account>(service).GetFirst());
 
             Assert.IsType<InvalidOperationException>(ex);
         }
@@ -2244,8 +2240,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
             fakedContext.Initialize(new List<Entity> { new Account { Id = _item1Id }, new Account { Id = _item2Id } });
             var service = fakedContext.GetOrganizationService();
 
-            var record = new Query<Account>()
-                .GetFirstOrDefault(service);
+            var record = new Query<Account>(service).GetFirstOrDefault();
 
             Assert.NotNull(record);
             Assert.Equal(record.Id, _item1Id);
@@ -2257,8 +2252,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
             var fakedContext = new XrmFakedContext { ProxyTypesAssembly = typeof(Account).Assembly };
             var service = fakedContext.GetOrganizationService();
 
-            var record = new Query<Account>()
-                .GetFirstOrDefault(service);
+            var record = new Query<Account>(service).GetFirstOrDefault();
 
             Assert.Null(record);
         }
@@ -2270,22 +2264,10 @@ namespace MscrmTools.FluentQueryExpressions.Test
             fakedContext.Initialize(new List<Entity> { new Account { Id = _item1Id }, new Account { Id = _item2Id } });
             var service = fakedContext.GetOrganizationService();
 
-            var record = new Query<Account>()
-                .GetLast(service);
+            var record = new Query<Account>(service).GetLast();
 
             Assert.NotNull(record);
             Assert.Equal(record.Id, _item2Id);
-        }
-
-        [Fact]
-        public void ShouldGetLastNull()
-        {
-            var fakedContext = new XrmFakedContext { ProxyTypesAssembly = typeof(Account).Assembly };
-            var service = fakedContext.GetOrganizationService();
-
-            var ex = Record.Exception(() => new Query<Account>().GetLast(service));
-
-            Assert.IsType<InvalidOperationException>(ex);
         }
 
         [Fact]
@@ -2295,8 +2277,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
             fakedContext.Initialize(new List<Entity> { new Account { Id = _item1Id }, new Account { Id = _item2Id } });
             var service = fakedContext.GetOrganizationService();
 
-            var record = new Query<Account>()
-                .GetLastOrDefault(service);
+            var record = new Query<Account>(service).GetLastOrDefault();
 
             Assert.NotNull(record);
             Assert.Equal(record.Id, _item2Id);
@@ -2308,8 +2289,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
             var fakedContext = new XrmFakedContext { ProxyTypesAssembly = typeof(Account).Assembly };
             var service = fakedContext.GetOrganizationService();
 
-            var record = new Query<Account>()
-                .GetLastOrDefault(service);
+            var record = new Query<Account>(service).GetLastOrDefault();
 
             Assert.Null(record);
         }
@@ -2321,8 +2301,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
             fakedContext.Initialize(new List<Entity> { new Account { Id = _item1Id }, new Account { Id = _item2Id } });
             var service = fakedContext.GetOrganizationService();
 
-            var records = new Query<Account>()
-                .GetResults(service);
+            var records = new Query<Account>(service).GetResults();
 
             Assert.Equal(2, records.Entities.Count);
         }
@@ -2334,8 +2313,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
             fakedContext.Initialize(new List<Entity> { new Account { Id = _item1Id } });
             var service = fakedContext.GetOrganizationService();
 
-            var record = new Query<Account>()
-                .GetSingle(service);
+            var record = new Query<Account>(service).GetSingle();
 
             Assert.NotNull(record);
             Assert.Equal(record.Id, _item1Id);
@@ -2348,7 +2326,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
             fakedContext.Initialize(new List<Entity> { new Account { Id = _item1Id }, new Account { Id = _item2Id } });
             var service = fakedContext.GetOrganizationService();
 
-            var ex = Record.Exception(() => new Query<Account>().GetSingle(service));
+            var ex = Record.Exception(() => new Query<Account>(service).GetSingle());
 
             Assert.IsType<InvalidOperationException>(ex);
         }
@@ -2359,7 +2337,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
             var fakedContext = new XrmFakedContext { ProxyTypesAssembly = typeof(Account).Assembly };
             var service = fakedContext.GetOrganizationService();
 
-            var ex = Record.Exception(() => new Query<Account>().GetSingle(service));
+            var ex = Record.Exception(() => new Query<Account>(service).GetSingle());
 
             Assert.IsType<InvalidOperationException>(ex);
         }
@@ -2371,8 +2349,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
             fakedContext.Initialize(new List<Entity> { new Account { Id = _item1Id } });
             var service = fakedContext.GetOrganizationService();
 
-            var record = new Query<Account>()
-                .GetSingleOrDefault(service);
+            var record = new Query<Account>(service).GetSingleOrDefault();
 
             Assert.NotNull(record);
             Assert.Equal(record.Id, _item1Id);
@@ -2384,8 +2361,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
             var fakedContext = new XrmFakedContext { ProxyTypesAssembly = typeof(Account).Assembly };
             var service = fakedContext.GetOrganizationService();
 
-            var record = new Query<Account>()
-                .GetSingleOrDefault(service);
+            var record = new Query<Account>(service).GetSingleOrDefault();
 
             Assert.Null(record);
         }
