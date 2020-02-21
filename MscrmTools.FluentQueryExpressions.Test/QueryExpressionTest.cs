@@ -2190,7 +2190,7 @@ namespace MscrmTools.FluentQueryExpressions.Test
             var service = fakedContext.GetOrganizationService();
 
             var query = new Query<Account>();
-            var record = query.GetById(Guid.NewGuid(), service);
+            var record = query.GetById(item1Id, service);
 
             Assert.NotNull(record);
             Assert.Equal(Account.EntityLogicalName + "id", query.QueryExpression.Criteria.Conditions.First().AttributeName);
@@ -2200,12 +2200,12 @@ namespace MscrmTools.FluentQueryExpressions.Test
         public void ShouldGetByIdForActivity()
         {
             var fakedContext = new XrmFakedContext { ProxyTypesAssembly = typeof(Account).Assembly };
-            fakedContext.Initialize(new Account { Id = item1Id });
+            fakedContext.Initialize(new Task { Id = item1Id });
 
             var service = fakedContext.GetOrganizationService();
 
             var query = new Query<Task>();
-            var record = query.GetById(Guid.NewGuid(), service, true);
+            var record = query.GetById(item1Id, service, true);
 
             Assert.NotNull(record);
             Assert.Equal("activityid", query.QueryExpression.Criteria.Conditions.First().AttributeName);
@@ -2381,7 +2381,6 @@ namespace MscrmTools.FluentQueryExpressions.Test
         public void ShouldGetSingleOrDefaultIsNull()
         {
             var fakedContext = new XrmFakedContext { ProxyTypesAssembly = typeof(Account).Assembly };
-            fakedContext.Initialize(new List<Entity> { new Account { Id = item1Id }, new Account { Id = item2Id } });
             var service = fakedContext.GetOrganizationService();
 
             var record = new Query<Account>()
